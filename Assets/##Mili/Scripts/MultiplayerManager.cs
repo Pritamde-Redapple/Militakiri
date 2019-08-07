@@ -32,8 +32,7 @@ public class MultiplayerManager : Singleton<MultiplayerManager>
     }
 
     public static Constants.PlayerTag GetPlayerTag()
-    {        
-        
+    {  
         return MyPlayerTag;
     }
 

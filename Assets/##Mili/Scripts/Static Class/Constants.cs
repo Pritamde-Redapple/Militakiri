@@ -3,10 +3,15 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+public enum GameEmits { adduser, gamerequest, playerReady, pawnplacements, leave_room, message_received, turnSubmited, turnstart };
+public enum GameListen { user_connected, connected_room, enter_user, gameinit, gamestart, initialpawnplacements, turndata, playerturn, turn_start, leave_room, game_winner };
+
+
 public static class Constants {
 
     #region Server Variables
-    public static string SocketURL = "http://18.219.52.107:3009/";
+    public static string SocketURL = "http://192.168.2.66:3009/";//"http://18.219.52.107:3009/";
     public static string PASSWORD = "password";
     public static string NAME = "name";
     public static string USER_NAME = "username";
@@ -113,8 +118,7 @@ public static class Constants {
     }
 
     #region Multiplayer
-    public enum GameEmits { adduser, gamerequest, playerReady, pawnplacement, leave_room, message_received, turnSubmited};
-
+   
     #endregion
 
 }
@@ -304,6 +308,36 @@ public struct TurnData
     }
 }
 
+[Serializable]
+public struct TurnDataWrapper
+{
+    public string room_name;
+    public string room_id;
+    public string user_id;
+
+    public TurnData turnData;
+
+    public TurnDataWrapper( string room_id, string user_id, TurnData turnData, string room_name = "")
+    {
+        this.room_name = room_name;
+        this.room_id = room_id;
+        this.user_id = user_id;
+        this.turnData = turnData;
+    }
+}
+
+[Serializable]
+public class GetTurnData
+{
+
+    //"message":"Your oponent turn data",
+    public TurnData turnData;
+
+    public GetTurnData(TurnData turnData)
+    {
+        this.turnData = turnData;
+    }
+}
 
 
 

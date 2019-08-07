@@ -238,6 +238,7 @@ namespace GWebUtility
                 }
                 else
                 {
+                    Debug.Log("Posting Web Request : "+_url);
                     _www = _www == null ? UnityWebRequest.Post(_url, _webForm) : _www;
                 }
                 _www.chunkedTransfer = false;

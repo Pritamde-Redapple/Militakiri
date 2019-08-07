@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -74,8 +75,10 @@ public class GameManager : MonoBehaviour {
 
     public void IncreaseTurn()
     {
+
         if(!Constants.isAI)
         {
+            return;
             //submit local player's data to server
         }
         playerTurnIndex++;
@@ -88,7 +91,7 @@ public class GameManager : MonoBehaviour {
         if(GameManager.instance.currentGameState != GAMESTATE.END)
            OnTurnChanged?.Invoke(currentPlayerTurn, isEndRuleGameActivated);
         // OnTurnChanged(currentPlayerTurn, isEndRuleGameActivated);
-        Debug.Log("Current Game State: "+ GameManager.instance.currentGameState);
+        Debug.Log("Current Game State: "+ currentGameState);
     }
     
     public void IncreaseTurn(Constants.PlayerType playersTurn)

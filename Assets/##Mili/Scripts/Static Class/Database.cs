@@ -34,7 +34,8 @@ public class Database {
         XP_POINT,
         USER_TYPE,
         PASSWORD,
-        SCORE
+        SCORE,
+        OPPONENT_NAME
 	};
 
 	public static string GetString(Key key){

@@ -9,15 +9,19 @@ public class Login : UIPage {
 
     public InputField iUserName;
     public InputField iPassword;
-    
+
+    private void Start()
+    {
+        //StartCoroutine(TestWebCall());
+    }
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Space))
+        if(Input.GetKeyDown(KeyCode.End))
         {
             iUserName.text = "p@p.com";
             iPassword.text = "password";
         }
-        if (Input.GetKeyDown(KeyCode.M))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             iUserName.text = "de@de.com";
             iPassword.text = "123456";
@@ -82,7 +86,7 @@ public void LoginAPICall(string userName, string password)
            .SetUrl(Configuration.Instance.GetApi(Configuration.ApiKey.LOGIN), Web.RequestType.POST, Web.ResponseType.TEXT)
            .AddField(Constants.USER_NAME, userName)
            .AddField(Constants.PASSWORD, password)
-
+           .AddHeader("Content-Type", "application/x-www-form-urlencoded")
           .SetOnSuccessDelegate((Web _web, Response _response) =>
           {
               Debug.Log(_response.GetText());
@@ -97,11 +101,11 @@ public void LoginAPICall(string userName, string password)
                   Database.PutString(Database.Key.ACCESS_TOKEN, node["result"]["access_token"].Value);
                   Database.PutString(Database.Key.PLAYER_ID, node["result"]["id"].Value);
                   Database.PutString(Database.Key.SCORE, node["result"]["score"].Value);
-                   Database.PutString(Database.Key.FIRST_NAME, node["result"]["name"].Value);
-                   Database.PutBool(Database.Key.IS_LOGGEDIN, true);
+                  Database.PutString(Database.Key.FIRST_NAME, node["result"]["name"].Value);
+                  Database.PutBool(Database.Key.IS_LOGGEDIN, true);
                   // Database.PutString(Database.Key.LAST_NAME, node["result"]["last_name"].Value);
-                
 
+                  Debug.Log("Got Score: " + node["result"]["score"].Value);
                   Database.PutString(Database.Key.IMAGE, node["result"]["image"].Value);
 
 
@@ -141,6 +145,19 @@ public void LoginAPICall(string userName, string password)
               _web.Close();
           })
           .Connect();
+    }
+
+    public IEnumerator TestWebCall()
+    {
+        WWWForm newForm = new WWWForm();
+        newForm.AddField("username", "asdf1@yopmail.com");
+        newForm.AddField("password", "123456");
+        
+        WWW newWWW = new WWW("http://192.168.2.66:3009/LOGIN", newForm);
+        yield return newWWW;
+        Debug.Log(newWWW.text);
+
+
     }
 
     public void RegisterClicked()

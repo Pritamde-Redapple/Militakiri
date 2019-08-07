@@ -165,11 +165,15 @@ public class Pawn : MonoBehaviour {
             .OnComplete(() =>
             {
                 //Set Data for Multiplayer
+                
                 GridData from = new GridData(occupiedSquare.squareId2, "", "");
 
                 GridData to = new GridData(targetSquare.squareId2, currentPawnType.ToString(), rank.ToString());
 
-                SocketController.instance.PrepareTurnData(from, to);
+                if (GameManager.instance.currentPlayerTurn == Constants.PlayerType.LOCAL)
+                    SocketController.instance.PrepareTurnData(from, to);
+                else
+                    SocketController.instance.FinishedTurn();
 
                 occupiedSquare.occupiedPawn = null;
                 targetSquare.occupiedPawn = this;
@@ -205,8 +209,11 @@ public class Pawn : MonoBehaviour {
 
                     GridData to = new GridData(targetSquare.squareId2, currentPawnType.ToString(), rank.ToString());
 
-                    SocketController.instance.PrepareTurnData(from, to);
 
+                    if (GameManager.instance.currentPlayerTurn == Constants.PlayerType.LOCAL)
+                        SocketController.instance.PrepareTurnData(from, to);
+                    else
+                        SocketController.instance.FinishedTurn();
 
 
                     BoardManager.instance.RemovePawnFromBoard(targetSquare.occupiedPawn);
@@ -286,8 +293,10 @@ public class Pawn : MonoBehaviour {
                          }
 
                          GridData to = new GridData(occupiedSquare.squareId2, newPawnID, Rank.ToString());
-
-                         SocketController.instance.PrepareTurnData(from, to);
+                         if (GameManager.instance.currentPlayerTurn == Constants.PlayerType.LOCAL)
+                             SocketController.instance.PrepareTurnData(from, to);
+                         else
+                             SocketController.instance.FinishedTurn();
                      });
             }
             else if(Rank >= targetSquare.occupiedPawn.Rank && Rank < 5)
@@ -305,6 +314,7 @@ public class Pawn : MonoBehaviour {
 
     private void Degrade(Square targetSquare)
     {
+        GridData from = new GridData(occupiedSquare.squareId2, "", "");
         for (int i = 0; i < Rank; i++)
         {
             BoardManager.instance.RemovePawnFromBoard(targetSquare.occupiedPawn.transform.GetChild(targetSquare.occupiedPawn.transform.childCount - 2).GetComponent<Pawn>());
@@ -319,6 +329,19 @@ public class Pawn : MonoBehaviour {
             targetSquare.occupiedPawn.transform.GetChild(i).GetComponent<Pawn>().SetMeshPosition(targetSquare.occupiedPawn.Rank - i);
         }
 
+        #region MultiplayerData
+        string newPawnID = this.currentPawnType.ToString();
+        foreach (Transform item in transform)
+        {
+            newPawnID = "," + item.GetComponent<Pawn>().currentPawnType.ToString();
+        }
+        GridData to = new GridData(targetSquare.squareId2, newPawnID, Rank.ToString());
+        if (GameManager.instance.currentPlayerTurn == Constants.PlayerType.LOCAL)
+            SocketController.instance.PrepareTurnData(from, to);
+        else
+            SocketController.instance.FinishedTurn(); 
+        #endregion
+
         occupiedSquare = null;
         BoardManager.instance.RemovePawnFromBoard(this);
         BoardManager.instance.ResetAllSquare();
@@ -328,7 +351,9 @@ public class Pawn : MonoBehaviour {
 
     private void Take(Square targetSquare)
     {
-       // Debug.Log("Now Take");
+        
+        GridData from = new GridData(occupiedSquare.squareId2, "", "");
+        // Debug.Log("Now Take");
         transform.DOMove(targetSquare.transform.position, 1f)
                  .OnComplete(() =>
                  {
@@ -356,6 +381,18 @@ public class Pawn : MonoBehaviour {
                      }
                      else
                          GameManager.instance.IncreaseTurn();
+
+                     string newPawnID = this.currentPawnType.ToString();
+                     foreach (Transform item in transform)
+                     {
+                         if(item.GetComponent<Pawn>())
+                            newPawnID = "," + item.GetComponent<Pawn>().currentPawnType.ToString();
+                     }
+                     GridData to = new GridData(targetSquare.squareId2, newPawnID, Rank.ToString());
+                     if (GameManager.instance.currentPlayerTurn == Constants.PlayerType.LOCAL)
+                         SocketController.instance.PrepareTurnData(from, to);
+                     else
+                         SocketController.instance.FinishedTurn();
                  });
     }
 

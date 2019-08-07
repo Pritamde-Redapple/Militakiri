@@ -31,6 +31,7 @@ public class MainMenu : UIPage {
 
     public void Logout()
     {
+        Database.DeleteEverything();
         UIManager.instance.TransitionTo(PageType.SPLASH_LOGIN);
     }
 }

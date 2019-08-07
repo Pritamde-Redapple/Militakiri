@@ -25,8 +25,7 @@ public class PlayerInput : MonoBehaviour {
             {
                 if (GameManager.instance.currentGameState == GameManager.GAMESTATE.PLACE_PAWN)
                 {
-                    boardManager.PlacePawn(hit.collider.GetComponent<Square>());
-                    
+                    boardManager.PlacePawn(hit.collider.GetComponent<Square>());                    
                 }
                 else if (GameManager.instance.currentGameState == GameManager.GAMESTATE.PLAY)
                 {

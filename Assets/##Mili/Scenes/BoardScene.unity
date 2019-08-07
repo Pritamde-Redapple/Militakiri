@@ -218,6 +218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 18
+  squareId2: 
   leftSquares: []
   rightSquares:
   - {fileID: 628051762}
@@ -634,6 +635,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 30
+  squareId2: 
   leftSquares: []
   rightSquares:
   - {fileID: 618831125}
@@ -1041,6 +1043,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 69
+  squareId2: 
   leftSquares:
   - {fileID: 343221158}
   - {fileID: 2039644492}
@@ -1133,6 +1136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 11
+  squareId2: 
   leftSquares:
   - {fileID: 2000936871}
   - {fileID: 1994362667}
@@ -2473,6 +2477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 52
+  squareId2: 
   leftSquares:
   - {fileID: 1501416005}
   - {fileID: 2035973529}
@@ -2825,6 +2830,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 4
+  squareId2: 
   leftSquares:
   - {fileID: 893269976}
   - {fileID: 1156455057}
@@ -3244,6 +3250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 33
+  squareId2: 
   leftSquares:
   - {fileID: 506494307}
   - {fileID: 618831125}
@@ -4077,6 +4084,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 35
+  squareId2: 
   leftSquares:
   - {fileID: 624680458}
   - {fileID: 255625760}
@@ -4428,6 +4436,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 58
+  squareId2: 
   leftSquares:
   - {fileID: 1949266932}
   - {fileID: 1343385984}
@@ -4618,6 +4627,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 42
+  squareId2: 
   leftSquares: []
   rightSquares:
   - {fileID: 1582587479}
@@ -4732,6 +4742,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 68
+  squareId2: 
   leftSquares:
   - {fileID: 2039644492}
   - {fileID: 1626091789}
@@ -5478,6 +5489,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 22
+  squareId2: 
   leftSquares:
   - {fileID: 855168054}
   - {fileID: 1869195935}
@@ -5728,6 +5740,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 65
+  squareId2: 
   leftSquares:
   - {fileID: 1638923129}
   - {fileID: 717707007}
@@ -6058,6 +6071,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 53
+  squareId2: 
   leftSquares:
   - {fileID: 224351078}
   - {fileID: 1501416005}
@@ -6628,6 +6642,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 1
+  squareId2: 
   leftSquares:
   - {fileID: 1519859880}
   rightSquares:
@@ -6841,6 +6856,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 32
+  squareId2: 
   leftSquares:
   - {fileID: 618831125}
   - {fileID: 21241650}
@@ -7265,6 +7281,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 26
+  squareId2: 
   leftSquares:
   - {fileID: 575618883}
   - {fileID: 1762150040}
@@ -10237,6 +10254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 39
+  squareId2: 
   leftSquares:
   - {fileID: 880481750}
   - {fileID: 1962042655}
@@ -10334,6 +10352,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 25
+  squareId2: 
   leftSquares:
   - {fileID: 1762150040}
   rightSquares:
@@ -10488,6 +10507,7 @@ GameObject:
   - component: {fileID: 585625138}
   - component: {fileID: 585625140}
   - component: {fileID: 585625139}
+  - component: {fileID: 585625141}
   m_Layer: 5
   m_Name: version
   m_TagString: Untagged
@@ -10556,6 +10576,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 585625137}
   m_CullTransparentMesh: 0
+--- !u!114 &585625141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 585625137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b032c8432d2d9b449978c9c099d4ed9f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &596223720
 GameObject:
   m_ObjectHideFlags: 0
@@ -11142,6 +11174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 31
+  squareId2: 
   leftSquares:
   - {fileID: 21241650}
   rightSquares:
@@ -11239,6 +11272,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 34
+  squareId2: 
   leftSquares:
   - {fileID: 255625760}
   - {fileID: 506494307}
@@ -11410,6 +11444,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 19
+  squareId2: 
   leftSquares:
   - {fileID: 10335451}
   rightSquares:
@@ -11702,6 +11737,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 16
+  squareId2: 
   leftSquares:
   - {fileID: 1974456927}
   - {fileID: 834610532}
@@ -12414,6 +12450,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 63
+  squareId2: 
   leftSquares:
   - {fileID: 2131253136}
   - {fileID: 2035450966}
@@ -12582,6 +12619,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 13
+  squareId2: 
   leftSquares:
   - {fileID: 1003302213}
   rightSquares:
@@ -12677,6 +12715,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 59
+  squareId2: 
   leftSquares:
   - {fileID: 302374027}
   - {fileID: 1949266932}
@@ -13004,6 +13043,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 45
+  squareId2: 
   leftSquares:
   - {fileID: 1105573804}
   - {fileID: 1582587479}
@@ -13290,6 +13330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 70
+  squareId2: 
   leftSquares:
   - {fileID: 89035687}
   - {fileID: 343221158}
@@ -13785,6 +13826,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 6
+  squareId2: 
   leftSquares: []
   rightSquares:
   - {fileID: 1394054599}
@@ -14297,6 +14339,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 14
+  squareId2: 
   leftSquares:
   - {fileID: 730328162}
   - {fileID: 1003302213}
@@ -14525,6 +14568,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 21
+  squareId2: 
   leftSquares:
   - {fileID: 1869195935}
   - {fileID: 628051762}
@@ -15652,7 +15696,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 862336702}
-  m_LocalRotation: {x: 0.051874045, y: -0.55464596, z: 0.034675438, w: 0.82974374}
+  m_LocalRotation: {x: 0.051874034, y: -0.5546459, z: 0.03467543, w: 0.82974374}
   m_LocalPosition: {x: 3.3906875, y: 0.2279008, z: -1.3646785}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -15901,6 +15945,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 49
+  squareId2: 
   leftSquares:
   - {fileID: 1920114507}
   rightSquares:
@@ -15997,6 +16042,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 38
+  squareId2: 
   leftSquares:
   - {fileID: 1962042655}
   - {fileID: 1058262664}
@@ -16268,6 +16314,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 3
+  squareId2: 
   leftSquares:
   - {fileID: 1156455057}
   - {fileID: 486623969}
@@ -21641,6 +21688,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 12
+  squareId2: 
   leftSquares: []
   rightSquares:
   - {fileID: 730328162}
@@ -21869,6 +21917,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 23
+  squareId2: 
   leftSquares:
   - {fileID: 408580977}
   - {fileID: 855168054}
@@ -22312,6 +22361,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 71
+  squareId2: 
   leftSquares:
   - {fileID: 767333555}
   - {fileID: 89035687}
@@ -22389,6 +22439,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 36
+  squareId2: 
   leftSquares: []
   rightSquares:
   - {fileID: 1962042655}
@@ -22719,6 +22770,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 44
+  squareId2: 
   leftSquares:
   - {fileID: 1582587479}
   - {fileID: 325269498}
@@ -22962,6 +23014,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 54
+  squareId2: 
   leftSquares: []
   rightSquares:
   - {fileID: 1163134564}
@@ -23151,6 +23204,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 2
+  squareId2: 
   leftSquares:
   - {fileID: 486623969}
   - {fileID: 1519859880}
@@ -23243,6 +23297,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 55
+  squareId2: 
   leftSquares:
   - {fileID: 1126005700}
   rightSquares:
@@ -23684,6 +23739,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 29
+  squareId2: 
   leftSquares:
   - {fileID: 1915299291}
   - {fileID: 2083265960}
@@ -24113,6 +24169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 46
+  squareId2: 
   leftSquares:
   - {fileID: 753180483}
   - {fileID: 1105573804}
@@ -25023,6 +25080,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 5
+  squareId2: 
   leftSquares:
   - {fileID: 243640157}
   - {fileID: 893269976}
@@ -25244,6 +25302,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 56
+  squareId2: 
   leftSquares:
   - {fileID: 1163134564}
   - {fileID: 1126005700}
@@ -25809,6 +25868,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 7
+  squareId2: 
   leftSquares:
   - {fileID: 800542120}
   rightSquares:
@@ -26339,6 +26399,8 @@ MonoBehaviour:
   camera2DDefault: {fileID: 1634197040}
   camAnimTime: 6
   nameText_local: {fileID: 2008935647}
+  nameText_remote: {fileID: 1655164496}
+  backButton: {fileID: 19310979}
   totalTime: 60
   timerText: {fileID: 359090504}
 --- !u!1 &1426328236
@@ -26590,7 +26652,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1433363409}
-  m_LocalRotation: {x: 0.051874045, y: -0.55464596, z: 0.034675438, w: 0.82974374}
+  m_LocalRotation: {x: 0.051874034, y: -0.5546459, z: 0.03467543, w: 0.82974374}
   m_LocalPosition: {x: 9.12, y: -0.05, z: -0.73}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -27338,6 +27400,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 51
+  squareId2: 
   leftSquares:
   - {fileID: 2035973529}
   - {fileID: 878578403}
@@ -27509,6 +27572,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 0
+  squareId2: 
   leftSquares: []
   rightSquares:
   - {fileID: 486623969}
@@ -28520,6 +28584,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 43
+  squareId2: 
   leftSquares:
   - {fileID: 325269498}
   rightSquares:
@@ -28617,6 +28682,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 60
+  squareId2: 
   leftSquares: []
   rightSquares:
   - {fileID: 2035450966}
@@ -28841,6 +28907,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 66
+  squareId2: 
   leftSquares: []
   rightSquares:
   - {fileID: 2039644492}
@@ -29094,6 +29161,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 64
+  squareId2: 
   leftSquares:
   - {fileID: 717707007}
   - {fileID: 2131253136}
@@ -30200,6 +30268,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 24
+  squareId2: 
   leftSquares: []
   rightSquares:
   - {fileID: 575618883}
@@ -30711,6 +30780,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 41
+  squareId2: 
   leftSquares:
   - {fileID: 2124874757}
   - {fileID: 566193755}
@@ -31357,6 +31427,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 20
+  squareId2: 
   leftSquares:
   - {fileID: 628051762}
   - {fileID: 10335451}
@@ -31454,6 +31525,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 17
+  squareId2: 
   leftSquares:
   - {fileID: 653864578}
   - {fileID: 1974456927}
@@ -31706,6 +31778,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 28
+  squareId2: 
   leftSquares:
   - {fileID: 2083265960}
   - {fileID: 531451934}
@@ -31803,6 +31876,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 48
+  squareId2: 
   leftSquares: []
   rightSquares:
   - {fileID: 878578403}
@@ -32084,6 +32158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 57
+  squareId2: 
   leftSquares:
   - {fileID: 1343385984}
   - {fileID: 1163134564}
@@ -32180,6 +32255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 37
+  squareId2: 
   leftSquares:
   - {fileID: 1058262664}
   rightSquares:
@@ -32277,6 +32353,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 15
+  squareId2: 
   leftSquares:
   - {fileID: 834610532}
   - {fileID: 730328162}
@@ -32527,6 +32604,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 9
+  squareId2: 
   leftSquares:
   - {fileID: 2088397021}
   - {fileID: 1394054599}
@@ -32698,6 +32776,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 10
+  squareId2: 
   leftSquares:
   - {fileID: 1994362667}
   - {fileID: 2088397021}
@@ -33004,6 +33083,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 61
+  squareId2: 
   leftSquares:
   - {fileID: 1591150211}
   rightSquares:
@@ -33098,6 +33178,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 50
+  squareId2: 
   leftSquares:
   - {fileID: 878578403}
   - {fileID: 1920114507}
@@ -33195,6 +33276,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 67
+  squareId2: 
   leftSquares:
   - {fileID: 1626091789}
   rightSquares:
@@ -33790,6 +33872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 27
+  squareId2: 
   leftSquares:
   - {fileID: 531451934}
   - {fileID: 575618883}
@@ -33964,6 +34047,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 8
+  squareId2: 
   leftSquares:
   - {fileID: 1394054599}
   - {fileID: 800542120}
@@ -34058,6 +34142,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 47
+  squareId2: 
   leftSquares:
   - {fileID: 1286998261}
   - {fileID: 753180483}
@@ -34297,6 +34382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 40
+  squareId2: 
   leftSquares:
   - {fileID: 566193755}
   - {fileID: 880481750}
@@ -34460,6 +34546,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   squareId: 62
+  squareId2: 
   leftSquares:
   - {fileID: 2035450966}
   - {fileID: 1591150211}

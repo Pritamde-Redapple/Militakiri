@@ -510,3 +510,19 @@ Preset:
     propertyPath: playerWithOneTower
     value: 0
     objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: local_spareTowerMaterial
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: remote_spareTowerMaterial
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: local_pawnMaterial
+    value: 
+    objectReference: {fileID: 0}
+  - target: {fileID: 0}
+    propertyPath: remote_pawnMaterial
+    value: 
+    objectReference: {fileID: 0}

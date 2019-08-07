@@ -99,7 +99,7 @@ public class BoardManager : MonoBehaviour {
     #endregion
    
 
-    Dictionary<string, Square> squareCollection = new Dictionary<string, Square>();
+    public Dictionary<string, Square> squareCollection = new Dictionary<string, Square>();
    
 
     private void Awake()
@@ -336,42 +336,87 @@ public class BoardManager : MonoBehaviour {
     //used for highlighting rows at the start of the game
     public void HighlightSquareForPlacingPawn()
     {
-        if(CounterForPlacingPawn  == 0)
+        if(Constants.isAI)
         {
-            GamePlay.instance.StartTurnTimer(60); //show warning here
-            GamePlay.instance.ShowWarning(40);
-        }
-       
-        if(CounterForPlacingPawn ==0)
-        {
-            ResetAllSquare();
-            for (int i = 0; i < Constants.noOfSquarePerRow; i++)
+            #region AI
+            if (CounterForPlacingPawn == 0)
             {
-                players[0].firstThreeRowSquare[i].SetHighlightStatus(true);
+                GamePlay.instance.StartTurnTimer(60); //show warning here
+                GamePlay.instance.ShowWarning(40);
             }
 
-            gamePlay.SetDesriptionForPlacingPawn("Place Star tower in highlighed place");
-        }
-        else if (CounterForPlacingPawn == 1)
-        {
-            ResetAllSquare();
-            for (int i = Constants.noOfSquarePerRow; i < 2 * Constants.noOfSquarePerRow; i++)
+            if (CounterForPlacingPawn == 0)
             {
-                players[0].firstThreeRowSquare[i].SetHighlightStatus(true);
+                ResetAllSquare();
+                for (int i = 0; i < Constants.noOfSquarePerRow; i++)
+                {
+                    players[0].firstThreeRowSquare[i].SetHighlightStatus(true);
+                }
+                gamePlay.SetDesriptionForPlacingPawn("Place Plus tower in highlighed place");
             }
-            gamePlay.SetDesriptionForPlacingPawn("Place Cross tower in highlighed place");
-        }
-        else if (CounterForPlacingPawn == 2)
-        {
-            ResetAllSquare();
-            for (int i = 2 * Constants.noOfSquarePerRow; i < 3 * Constants.noOfSquarePerRow; i++)
+            else if (CounterForPlacingPawn == 1)
             {
-                players[0].firstThreeRowSquare[i].SetHighlightStatus(true);
+                ResetAllSquare();
+                for (int i = Constants.noOfSquarePerRow; i < 2 * Constants.noOfSquarePerRow; i++)
+                {
+                    players[0].firstThreeRowSquare[i].SetHighlightStatus(true);
+                }
+                gamePlay.SetDesriptionForPlacingPawn("Place Cross tower in highlighed place");
             }
-            gamePlay.SetDesriptionForPlacingPawn("Place Plus tower in highlighed place");
+            else if (CounterForPlacingPawn == 2)
+            {
+                ResetAllSquare();
+                for (int i = 2 * Constants.noOfSquarePerRow; i < 3 * Constants.noOfSquarePerRow; i++)
+                {
+                    players[0].firstThreeRowSquare[i].SetHighlightStatus(true);
+                }
+                gamePlay.SetDesriptionForPlacingPawn("Place Star tower in highlighed place");
+            }
+            else
+                gamePlay.SetDesriptionForPlacingPawn("");
+            #endregion
         }
         else
-            gamePlay.SetDesriptionForPlacingPawn("");
+        {
+            #region Multiplayer
+            if (CounterForPlacingPawn == 0)
+            {
+                GamePlay.instance.StartTurnTimer(60); //show warning here
+                GamePlay.instance.ShowWarning(40);
+            }
+
+            if (CounterForPlacingPawn == 2)
+            {
+                ResetAllSquare();
+                for (int i = 0; i < Constants.noOfSquarePerRow; i++)
+                {
+                    players[0].firstThreeRowSquare[i].SetHighlightStatus(true);
+                }
+                gamePlay.SetDesriptionForPlacingPawn("Place Plus tower in highlighed place");
+            }
+            else if (CounterForPlacingPawn == 1)
+            {
+                ResetAllSquare();
+                for (int i = Constants.noOfSquarePerRow; i < 2 * Constants.noOfSquarePerRow; i++)
+                {
+                    players[0].firstThreeRowSquare[i].SetHighlightStatus(true);
+                }
+                gamePlay.SetDesriptionForPlacingPawn("Place Cross tower in highlighed place");
+            }
+            else if (CounterForPlacingPawn == 0)
+            {
+                ResetAllSquare();
+                for (int i = 2 * Constants.noOfSquarePerRow; i < 3 * Constants.noOfSquarePerRow; i++)
+                {
+                    players[0].firstThreeRowSquare[i].SetHighlightStatus(true);
+                }
+                gamePlay.SetDesriptionForPlacingPawn("Place Star tower in highlighed place");
+            }
+            else
+                gamePlay.SetDesriptionForPlacingPawn("");
+            #endregion
+        }
+
     }
 
     public void PlacePawnsRandomly()
@@ -426,38 +471,90 @@ public class BoardManager : MonoBehaviour {
 
         int towerIndex = 0;
         int pawnIndex = 0;
-        switch (CounterForPlacingPawn)
+
+        if(Constants.isAI)
         {
-            
-            case 0:
-                towerIndex = 4;
-                pawnIndex = 0;
-                SetHightlights(square, towerIndex, pawnIndex);              
-                break;
-            case 1:
-                towerIndex = 3;
-                pawnIndex = 1;
-                SetHightlights(square, towerIndex, pawnIndex);
-                break;
-            case 2:
-                int index = square.SquareId;
-                CreatePawn(index, players[0].allPawns, localPawns[5]);
+            #region Multiplayer
+            switch (CounterForPlacingPawn)
+            {
 
-                for (int i = 12; i < 12 + Constants.noOfSquarePerRow; i++)
-                {
-                    if (players[0].firstThreeRowSquare[i].SquareId != index)
-                        CreatePawn(players[0].firstThreeRowSquare[i].SquareId, players[0].allPawns, localPawns[2]); 
-                }
+                case 0:
+                    towerIndex = 4;
+                    pawnIndex = 0;
+                    SetHightlights(square, towerIndex, pawnIndex);
+                    
+                    break;
+                case 1:
+                    towerIndex = 3;
+                    pawnIndex = 1;
+                    SetHightlights(square, towerIndex, pawnIndex);
+                    break;
+                case 2:
+                    int index = square.SquareId;
+                    CreatePawn(index, players[0].allPawns, localPawns[5]);
 
-                //send multiplayer data from here
-                //if (!Constants.isAI)
-                //    newPawnPlaced.AddSquareID(index);
-                break;
-            default:
-                break;
+                    for (int i = 12; i < 12+ Constants.noOfSquarePerRow; i++)
+                    {
+                        if (players[0].firstThreeRowSquare[i].SquareId != index)
+                        {
+                            CreatePawn(players[0].firstThreeRowSquare[i].SquareId, players[0].allPawns, localPawns[2]);
+                        }
+                    }
+
+                    //send multiplayer data from here
+                    //if (!Constants.isAI)
+                    //    newPawnPlaced.AddSquareID(index);
+                    break;
+                default:
+                    break;
+            }
+            #endregion
         }
-        
-       // Debug.Log("Counter for placing pawns: " + CounterForPlacingPawn);
+
+        else
+        {
+            #region Multiplayer
+            switch (CounterForPlacingPawn)
+            {
+
+                case 2:
+
+                    int index = square.SquareId;
+                    CreatePawn(index, players[0].allPawns, localPawns[5]);
+
+                    for (int i = 0; i < Constants.noOfSquarePerRow; i++)
+                    {
+                        if (players[0].firstThreeRowSquare[i].SquareId != index)
+                        {
+                            CreatePawn(players[0].firstThreeRowSquare[i].SquareId, players[0].allPawns, localPawns[2]);
+                        }
+                    }
+                    break;
+                case 1:
+                    towerIndex = 3;
+                    pawnIndex = 1;
+                    SetHightlights(square, towerIndex, pawnIndex);
+                    break;
+                case 0:
+                    towerIndex = 4;
+                    pawnIndex = 0;
+                    SetHightlights(square, towerIndex, pawnIndex);
+
+                    //send multiplayer data from here
+                    //if (!Constants.isAI)
+                    //    newPawnPlaced.AddSquareID(index);
+                    break;
+                default:
+                    break;
+            }
+            #endregion
+        }
+
+
+
+
+
+        // Debug.Log("Counter for placing pawns: " + CounterForPlacingPawn);
         CounterForPlacingPawn++;
         if (CounterForPlacingPawn == 3)
             gamePlay.ShowWarning(false);
@@ -520,7 +617,7 @@ public class BoardManager : MonoBehaviour {
             if(i == index)
                CreatePawn(players[1].firstThreeRowSquare[i].SquareId, players[1].allPawns, remotePawns[5]);
             else
-                CreatePawn(players[1].firstThreeRowSquare[i].SquareId, players[1].allPawns, remotePawns[2]);
+               CreatePawn(players[1].firstThreeRowSquare[i].SquareId, players[1].allPawns, remotePawns[2]);
         }
 
         // PLACE PLUS AND CROSS TOWER & NORMAL PAWN
@@ -708,7 +805,7 @@ public class BoardManager : MonoBehaviour {
         }       
     }
 
-    Square GetSquare(string key)
+    public Square GetSquare(string key)
     {
         return squareCollection[key];
     }   

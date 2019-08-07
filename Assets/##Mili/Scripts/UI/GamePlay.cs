@@ -40,7 +40,9 @@ public class GamePlay : UIPage {
     private float camAnimTime = 2;
     [SerializeField]
     private Text nameText_local;
-
+    [SerializeField]
+    private Text nameText_remote;
+    public GameObject backButton;
     private void Awake()
     {
         instance = this;
@@ -49,7 +51,14 @@ public class GamePlay : UIPage {
         PopUp.OnClosePopUp += OnClosePopUp;
         ViewTypeClicked((int)Constants.ViewType.THREE_D);
         StartCoroutine(SetViewType());
-
+        if(Constants.isAI)
+        {
+            backButton.SetActive(false);
+        }
+        else
+        {
+            backButton.SetActive(true);
+        }
        // effectCam.gameObject.SetActive(false);
        // cam.gameObject.SetActive(true);
       // ViewTypeClicked((int)Constants.ViewType.THREE_D);
@@ -65,7 +74,8 @@ public class GamePlay : UIPage {
 
     private void Start()
     {
-        nameText_local.text = Database.GetString(Database.Key.FIRST_NAME);       
+        nameText_local.text = Database.GetString(Database.Key.FIRST_NAME); 
+        nameText_remote.text = Database.GetString(Database.Key.OPPONENT_NAME);
     }
 
     IEnumerator SetViewType()
@@ -81,7 +91,10 @@ public class GamePlay : UIPage {
             SocketController.instance.LoadedBoardScene();
     }
 
-
+    public void SetOpponentName(string nam)
+    {
+        nameText_remote.text = nam;
+    }
 
     //void CamInitAnimation()
     //{
@@ -111,6 +124,8 @@ public class GamePlay : UIPage {
 
     private void OnTurnChanged(Constants.PlayerType obj, bool isEndRuleGameActivated)
     {
+
+        Debug.LogError("OnTurnChanged: "+ (int)obj + " player name" + obj.ToString());
         currentPlayerType = obj;
         int playerIndex = (int)obj;
         glowForCurrentTurn.anchoredPosition = playerPicPosition[playerIndex].anchoredPosition;

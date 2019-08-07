@@ -23,7 +23,7 @@ namespace socket.io {
                     .Sample(TimeSpan.FromSeconds(10f))
                     .Subscribe(_ => {
                         WebSocket.Send(Packet.Ping);
-                        Debug.LogFormat("socket.io => {0} ping~", WebSocket.Url.ToString());
+                      //  Debug.LogFormat("socket.io => {0} ping~", WebSocket.Url.ToString());
                     });
             }
 

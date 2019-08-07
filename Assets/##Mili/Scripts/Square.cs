@@ -315,10 +315,6 @@ public class Square : MonoBehaviour {
 
     public void MovePawn(Square targetSquare)
     {
-        if(!Constants.isAI)
-        {
-           // SocketController.instance.SubmitTurn(this, targetSquare);
-        }
         occupiedPawn.MovePawn(targetSquare);
     }
 
