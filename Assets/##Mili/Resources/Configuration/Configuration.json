@@ -1,6 +1,6 @@
 ﻿{
   "API": {
-    "DOMAIN": "http://192.168.2.66:3009/",
+    "DOMAIN": "http://52.66.82.72:2095/",
     "REGISTRATION": "registration",
     "LOGIN": "login",
     "GUEST_LOGIN": "guest-login",

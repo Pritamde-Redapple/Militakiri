@@ -1,11 +1,11 @@
 ﻿
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour
+{
 
     public static GameManager instance;
     public List<Sprite> rankSprites;
@@ -29,11 +29,11 @@ public class GameManager : MonoBehaviour {
 
     public static Action<Constants.PlayerType, bool> OnTurnChanged;
     public static Action OnGameResultDeclare;
-    
+
 
     private void Awake()
     {
-        instance = this;       
+        instance = this;
     }
 
 
@@ -76,24 +76,24 @@ public class GameManager : MonoBehaviour {
     public void IncreaseTurn()
     {
 
-        if(!Constants.isAI)
+        if (!Constants.isAI)
         {
             return;
             //submit local player's data to server
         }
         playerTurnIndex++;
-        if(playerTurnIndex == 2)
+        if (playerTurnIndex == 2)
         {
             playerTurnIndex = 0;
         }
 
         currentPlayerTurn = (Constants.PlayerType)playerTurnIndex;
-        if(GameManager.instance.currentGameState != GAMESTATE.END)
-           OnTurnChanged?.Invoke(currentPlayerTurn, isEndRuleGameActivated);
+        if (GameManager.instance.currentGameState != GAMESTATE.END)
+            OnTurnChanged?.Invoke(currentPlayerTurn, isEndRuleGameActivated);
         // OnTurnChanged(currentPlayerTurn, isEndRuleGameActivated);
-        Debug.Log("Current Game State: "+ currentGameState);
+        Debug.Log("Current Game State: " + currentGameState);
     }
-    
+
     public void IncreaseTurn(Constants.PlayerType playersTurn)
     {
         currentPlayerTurn = playersTurn;
@@ -119,5 +119,5 @@ public class GameManager : MonoBehaviour {
             OnGameResultDeclare();
     }
 
-    
+
 }

@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Events;
-public class PlayerInput : MonoBehaviour {
+﻿using UnityEngine;
+public class PlayerInput : MonoBehaviour
+{
 
     public float rayDistance;
     public LayerMask interactionLayer;
@@ -15,21 +13,23 @@ public class PlayerInput : MonoBehaviour {
     }
     private void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             if (!boardManager.canClick)
                 return;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray,out hit, rayDistance, interactionLayer))
+            if (Physics.Raycast(ray, out hit, rayDistance, interactionLayer))
             {
                 if (GameManager.instance.currentGameState == GameManager.GAMESTATE.PLACE_PAWN)
                 {
-                    boardManager.PlacePawn(hit.collider.GetComponent<Square>());                    
+                    boardManager.PlacePawn(hit.collider.GetComponent<Square>());
                 }
                 else if (GameManager.instance.currentGameState == GameManager.GAMESTATE.PLAY)
                 {
+                    Debug.Log("Clicked On : " + hit.collider.GetComponent<Square>().squareId2);
                     boardManager.IsSquareSelected(hit.collider.GetComponent<Square>());
+                    
                     //if valid click return a callback
                 }
             }

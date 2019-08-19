@@ -1,11 +1,10 @@
 ﻿using DG.Tweening;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Pawn : MonoBehaviour {
+public class Pawn : MonoBehaviour
+{
 
     public int pawnId;
 
@@ -22,7 +21,7 @@ public class Pawn : MonoBehaviour {
         }
     }
 
-   
+
 
     public enum PawnType
     {
@@ -31,7 +30,7 @@ public class Pawn : MonoBehaviour {
         STAR
     }
 
-    
+
 
     public Constants.PlayerType currentPlayerType;
     public PawnType currentPawnType;
@@ -72,7 +71,7 @@ public class Pawn : MonoBehaviour {
         GamePlay.OnViewTypeChange += OnViewTypeChange;
         BoardManager.OnActiveEndRule += ActiveEndGameRule;
         BoardManager.OnDeactiveEndRule += DeactiveEndGameRule;
-      
+
     }
 
     private void Start()
@@ -105,7 +104,7 @@ public class Pawn : MonoBehaviour {
 
     private void OnViewTypeChange(Constants.ViewType obj)
     {
-       rankImage.transform.parent.gameObject.SetActive(!(obj == Constants.ViewType.THREE_D));
+        rankImage.transform.parent.gameObject.SetActive(!(obj == Constants.ViewType.THREE_D));
     }
 
     public virtual void ShowPossibleMoves()
@@ -159,13 +158,13 @@ public class Pawn : MonoBehaviour {
         if (targetSquare.occupiedPawn == null)
         {
 
-            
+
             // SIMLE MOVE
             transform.DOMove(targetSquare.transform.position, 1f)
             .OnComplete(() =>
             {
                 //Set Data for Multiplayer
-                
+
                 GridData from = new GridData(occupiedSquare.squareId2, "", "");
 
                 GridData to = new GridData(targetSquare.squareId2, currentPawnType.ToString(), rank.ToString());
@@ -183,19 +182,19 @@ public class Pawn : MonoBehaviour {
                 GameManager.instance.IncreaseTurn();
             });
 
-           
-            
+
+
         }
         //SIMPLE MOVE AND REMOVE TARGET PAWN
         else
         {
-           
 
-            if ((Rank < 5 && targetSquare.occupiedPawn.Rank > 5) || (Rank > 5)||
+
+            if ((Rank < 5 && targetSquare.occupiedPawn.Rank > 5) || (Rank > 5) ||
                 (Rank == Constants.GetMaximumRank(currentPawnType)))
             {
 
-                
+
 
 
 
@@ -226,7 +225,7 @@ public class Pawn : MonoBehaviour {
                     GameManager.instance.IncreaseTurn();
                 });
             }
-            else if(Rank == targetSquare.occupiedPawn.Rank && Rank != 1 )
+            else if (Rank == targetSquare.occupiedPawn.Rank && Rank != 1)
             {
                 // IF Rank 2 pawn of upper shape star take another pawn of rank 2, then rank will be 3 and lower pawn of taken pawn will be removed
 
@@ -245,13 +244,13 @@ public class Pawn : MonoBehaviour {
                      {
                          occupiedSquare.occupiedPawn = null;
 
-                         targetSquare.occupiedPawn.transform.SetParent(this.transform);
+                         targetSquare.occupiedPawn.transform.SetParent(transform);
                          for (int i = targetSquare.occupiedPawn.transform.childCount - 2; i > 0; i--)
                          {
-                             targetSquare.occupiedPawn.transform.GetChild(i).SetParent(this.transform);
+                             targetSquare.occupiedPawn.transform.GetChild(i).SetParent(transform);
                          }
                          Rank += targetSquare.occupiedPawn.Rank;
-                         Rank = Mathf.Clamp(Rank,0,Constants.GetMaximumRank(currentPawnType));
+                         Rank = Mathf.Clamp(Rank, 0, Constants.GetMaximumRank(currentPawnType));
 
                          UpdateRankImage(Rank, false);
 
@@ -282,24 +281,31 @@ public class Pawn : MonoBehaviour {
                          if (OnTakeComplete != null)
                          {
                              OnTakeComplete(currentPlayerType, this);
+                             string newPawnID2 = currentPawnType.ToString();
+                             GridData to2 = new GridData(occupiedSquare.squareId2, newPawnID2, Rank.ToString());
+                             if (GameManager.instance.currentPlayerTurn == Constants.PlayerType.LOCAL)
+                             {
+                                 SocketController.instance.PrepareTurnData(from, to2, TurnType.sparePawn.ToString());
+                                 return;
+                             }
                          }
                          else
                              GameManager.instance.IncreaseTurn();
 
-                         string newPawnID = this.currentPawnType.ToString();
+                         string newPawnID = currentPawnType.ToString();
                          foreach (Transform item in transform)
                          {
-                             newPawnID = "," + item.GetComponent<Pawn>().currentPawnType.ToString();
+                            // newPawnID = "," + item.GetComponent<Pawn>().currentPawnType.ToString();
                          }
 
                          GridData to = new GridData(occupiedSquare.squareId2, newPawnID, Rank.ToString());
                          if (GameManager.instance.currentPlayerTurn == Constants.PlayerType.LOCAL)
-                             SocketController.instance.PrepareTurnData(from, to);
+                             SocketController.instance.PrepareTurnData(from, to, TurnType.sparePawn.ToString());
                          else
                              SocketController.instance.FinishedTurn();
                      });
             }
-            else if(Rank >= targetSquare.occupiedPawn.Rank && Rank < 5)
+            else if (Rank >= targetSquare.occupiedPawn.Rank && Rank < 5)
             {
                 // TAKE
                 Take(targetSquare);
@@ -320,7 +326,7 @@ public class Pawn : MonoBehaviour {
             BoardManager.instance.RemovePawnFromBoard(targetSquare.occupiedPawn.transform.GetChild(targetSquare.occupiedPawn.transform.childCount - 2).GetComponent<Pawn>());
         }
         occupiedSquare.occupiedPawn = null;
-           
+
         targetSquare.occupiedPawn.Rank -= Rank;
 
         targetSquare.occupiedPawn.SetMeshPosition(targetSquare.occupiedPawn.Rank, false);
@@ -330,16 +336,16 @@ public class Pawn : MonoBehaviour {
         }
 
         #region MultiplayerData
-        string newPawnID = this.currentPawnType.ToString();
+        string newPawnID = currentPawnType.ToString();
         foreach (Transform item in transform)
         {
-            newPawnID = "," + item.GetComponent<Pawn>().currentPawnType.ToString();
+           // newPawnID = "," + item.GetComponent<Pawn>().currentPawnType.ToString();
         }
         GridData to = new GridData(targetSquare.squareId2, newPawnID, Rank.ToString());
         if (GameManager.instance.currentPlayerTurn == Constants.PlayerType.LOCAL)
             SocketController.instance.PrepareTurnData(from, to);
         else
-            SocketController.instance.FinishedTurn(); 
+            SocketController.instance.FinishedTurn();
         #endregion
 
         occupiedSquare = null;
@@ -351,17 +357,17 @@ public class Pawn : MonoBehaviour {
 
     private void Take(Square targetSquare)
     {
-        
+
         GridData from = new GridData(occupiedSquare.squareId2, "", "");
         // Debug.Log("Now Take");
         transform.DOMove(targetSquare.transform.position, 1f)
                  .OnComplete(() =>
                  {
                      occupiedSquare.occupiedPawn = null;
-                    
-                     targetSquare.occupiedPawn.transform.SetParent(this.transform);
+
+                     targetSquare.occupiedPawn.transform.SetParent(transform);
                      Rank++;
-                    
+
 
                      SetMeshPosition(Rank, false);
                      for (int i = 1; i < transform.childCount - 1; i++)
@@ -374,23 +380,33 @@ public class Pawn : MonoBehaviour {
                      BoardManager.instance.ResetAllSquare();
                      BoardManager.instance.OnMovementComplete();
 
-                     if ( Constants.GetMaximumRank(currentPawnType) <= Rank && OnTakeComplete != null)
+                     if (Constants.GetMaximumRank(currentPawnType) <= Rank && OnTakeComplete != null)
                      {
                          Debug.Log("Call once ");
                          OnTakeComplete(currentPlayerType, this);
+                         string newPawnID2 = currentPawnType.ToString();
+
+                         GridData to2 = new GridData(targetSquare.squareId2, newPawnID2, Rank.ToString());
+                         if (GameManager.instance.currentPlayerTurn == Constants.PlayerType.LOCAL)
+                         {
+                             SocketController.instance.PrepareTurnData(from, to2, TurnType.sparePawn.ToString());
+                             return;
+                         }
+
+
                      }
                      else
                          GameManager.instance.IncreaseTurn();
 
-                     string newPawnID = this.currentPawnType.ToString();
-                     foreach (Transform item in transform)
-                     {
-                         if(item.GetComponent<Pawn>())
-                            newPawnID = "," + item.GetComponent<Pawn>().currentPawnType.ToString();
-                     }
+                     string newPawnID = currentPawnType.ToString();
+                     //foreach (Transform item in transform)
+                     //{
+                     //    if (item.GetComponent<Pawn>())
+                     //        newPawnID = "," + item.GetComponent<Pawn>().currentPawnType.ToString();
+                     //}
                      GridData to = new GridData(targetSquare.squareId2, newPawnID, Rank.ToString());
                      if (GameManager.instance.currentPlayerTurn == Constants.PlayerType.LOCAL)
-                         SocketController.instance.PrepareTurnData(from, to);
+                         SocketController.instance.PrepareTurnData(from, to, TurnType.normalPawn.ToString());
                      else
                          SocketController.instance.FinishedTurn();
                  });
@@ -445,19 +461,19 @@ public class Pawn : MonoBehaviour {
     public void SetMeshPosition(int rank, bool shouldHide = true)
     {
         meshComponent.localPosition = new Vector3(0, 0, (rank - 1) * 0.0013f);
-        UpdateRankImage(rank,shouldHide);
+        UpdateRankImage(rank, shouldHide);
     }
 
     void UpdateRankImage(int rank, bool shouldHide)
     {
         rankImage.transform.parent.SetAsLastSibling();
         rankImage.gameObject.SetActive(!shouldHide);
-        if(!shouldHide)
-           rankImage.sprite = GameManager.instance.rankSprites[rank - 1];
+        if (!shouldHide)
+            rankImage.sprite = GameManager.instance.rankSprites[rank - 1];
     }
 
     public int GetDistance(Square square)
     {
-       return (occupiedSquare.SquareId - square.SquareId) / Constants.noOfSquarePerRow;
+        return (occupiedSquare.SquareId - square.SquareId) / Constants.noOfSquarePerRow;
     }
 }

@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using DG.Tweening;
-using UnityEngine.UI;
+﻿using DG.Tweening;
 using System;
+using UnityEngine;
+using UnityEngine.UI;
 
-public class PopUp : MonoBehaviour {
+public class PopUp : MonoBehaviour
+{
 
     public Ease openEaseType;
     public Ease closeEaseType;
@@ -29,7 +28,7 @@ public class PopUp : MonoBehaviour {
     }
 
     public PopUpType currentPopType;
-   
+
 
     private void OnEnable()
     {
@@ -43,7 +42,8 @@ public class PopUp : MonoBehaviour {
     {
         popUp.transform.localScale = Vector3.one;
         overlay.DOColor(new Color(defaultColor.r, defaultColor.g, defaultColor.b, 0), duration);
-        popUp.transform.DOScale(Vector3.zero, duration).SetEase(closeEaseType).OnComplete(() => {
+        popUp.transform.DOScale(Vector3.zero, duration).SetEase(closeEaseType).OnComplete(() =>
+        {
             if (OnClosePopUp != null)
                 OnClosePopUp(currentPopType);
             gameObject.SetActive(false);
@@ -53,11 +53,12 @@ public class PopUp : MonoBehaviour {
     {
         popUp.transform.localScale = Vector3.one;
         overlay.DOColor(new Color(defaultColor.r, defaultColor.g, defaultColor.b, 0), duration);
-        popUp.transform.DOScale(Vector3.zero, duration).SetEase(closeEaseType).OnComplete(() => {
+        popUp.transform.DOScale(Vector3.zero, duration).SetEase(closeEaseType).OnComplete(() =>
+        {
             if (OnClosePopUp != null)
                 OnClosePopUp((PopUpType)Enum.Parse(typeof(PopUpType), type, true));
             gameObject.SetActive(false);
         });
     }
-    
+
 }

@@ -1,27 +1,25 @@
-﻿using socket.io;
-using System.Collections;
+﻿using SimpleJSON;
+using socket.io;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using SimpleJSON;
 using UnityEngine.SceneManagement;
-using MiniJSON;
-using DG.Tweening;
-using System;
 
-public class SocketController : MonoBehaviour {
+public class SocketController : MonoBehaviour
+{
     public static SocketController instance;
-
+    public static bool isSpareTowerTurn = false;
     private Socket socket;
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 
@@ -47,7 +45,7 @@ public class SocketController : MonoBehaviour {
         socket.On(GameListen.connected_room.ToString(), GameRequestCallback);  //when room created and waiting for another player
         socket.On(GameListen.enter_user.ToString(), EnterUserCallback); //fired twice
         socket.On(GameListen.gameinit.ToString(), GameInitCallback); //when two player joins and game starts. Change scene here.
-        socket.On(GameListen.gamestart.ToString(), GameStart); 
+        socket.On(GameListen.gamestart.ToString(), GameStart);
         // socket.On("game_winner", GameWinnerCallback);
         socket.On(GameListen.initialpawnplacements.ToString(), StartingPawnsPlaced);
         socket.On(GameListen.turndata.ToString(), OpponentsTurnCallback);
@@ -55,9 +53,23 @@ public class SocketController : MonoBehaviour {
         socket.On(GameListen.turn_start.ToString(), WhoWillPlay);
         socket.On(GameListen.leave_room.ToString(), SomeoneLeftRoom);
         socket.On(GameListen.game_winner.ToString(), GameDone);
-       
+        socket.On(GameListen.sparePawnData.ToString(), SparePawnData);
         
 
+
+
+    }
+
+    private void SparePawnData(string obj)
+    {
+        isSpareTowerTurn = false;
+        Debug.Log("Got Spare Pawn Data: " + obj);       
+        JSONNode data = JSONNode.Parse(obj);
+        string id = data["result"]["turnData"]["to"]["SquareID"].Value;
+        Debug.Log("Got target square id as : "+ id);
+        Square targetSquare = BoardManager.instance.GetSquare(id);
+        Player player = BoardManager.instance.dic_players[Constants.PlayerType.REMOTE];
+        BoardManager.instance.PlaceSparePawnForRemote(id);
     }
 
     private void GameDone(string obj)
@@ -87,8 +99,8 @@ public class SocketController : MonoBehaviour {
         Debug.Log("WhoWillPlay" + obj);
         JSONNode data = JSONNode.Parse(obj);
         string currentPlayerUserId = data["result"]["user_id"].Value;
-        Debug.Log(currentPlayerUserId +"____"+ Database.GetString(Database.Key.PLAYER_ID));
-        if(Database.GetString(Database.Key.PLAYER_ID).CompareTo(currentPlayerUserId) == 0)
+        Debug.Log(currentPlayerUserId + "____" + Database.GetString(Database.Key.PLAYER_ID));
+        if (Database.GetString(Database.Key.PLAYER_ID).CompareTo(currentPlayerUserId) == 0)
         {
             Debug.Log("My Turn");
             BoardManager.instance.canClick = true;
@@ -151,13 +163,14 @@ public class SocketController : MonoBehaviour {
     {
         //{ "room_id":"5d3adfceb7345c267b360b67","room_name":"ROOM1564139470776",
         //    "user_id":"5cf64d845732bb2515e975d0","turn_start":"1"}
-
+        if (isSpareTowerTurn)
+            return;
         Dictionary<string, string> data = new Dictionary<string, string>();
         data["room_id"] = Database.GetString(Database.Key.ROOM_ID);
         data["room_name"] = Database.GetString(Database.Key.ROOM_NAME);
         data["user_id"] = Database.GetString(Database.Key.PLAYER_ID);
         data["turn_start"] = "1";
-        Debug.Log("Turn Start Fired "+ data.ToString());
+        Debug.Log("Turn Start Fired " + data.ToString());
         socket.EmitJson(GameEmits.turnstart.ToString(), new JSONObject(data).ToString());
     }
 
@@ -181,7 +194,7 @@ public class SocketController : MonoBehaviour {
         JSONNode data = JSONNode.Parse(jsonData);
         if (data["status"].Value == ErrorCode.SUCCESS_CODE)
         {
-         //   Debug.Log("Show Searching player");
+            //   Debug.Log("Show Searching player");
             LoadingCanvas.Instance.ShowLoadingPopUp("Searching Player! Please wait");
         }
     }
@@ -201,7 +214,7 @@ public class SocketController : MonoBehaviour {
 }
  * 
  * 
- * */ 
+ * */
     #endregion
     public void EnterUserCallback(string jsonData)
     {
@@ -242,7 +255,7 @@ public class SocketController : MonoBehaviour {
 ]
 }
 }
-*/ 
+*/
     #endregion
     public void GameInitCallback(string jsonData)
     {
@@ -259,19 +272,19 @@ public class SocketController : MonoBehaviour {
             for (int i = 0; i < 2; i++)
             {
                 string thisUserId = data["result"]["roomplayers"][i]["user_id"].Value.ToString();
-              //  Debug.Log("this user id: "+ Database.GetString(Database.Key.PLAYER_ID) + "___other: "+ data["result"]["roomplayers"][i]["user_id"].Value.ToString());
-                if(!thisUserId.Equals(Database.GetString(Database.Key.PLAYER_ID)))
+                //  Debug.Log("this user id: "+ Database.GetString(Database.Key.PLAYER_ID) + "___other: "+ data["result"]["roomplayers"][i]["user_id"].Value.ToString());
+                if (!thisUserId.Equals(Database.GetString(Database.Key.PLAYER_ID)))
                 {
                     string opponentsName = data["result"]["roomplayers"][i]["room_player_name"].Value.ToString();
-                   // Debug.Log("Opponents Name: "+ opponentsName);
+                    // Debug.Log("Opponents Name: "+ opponentsName);
                     LoadingCanvas.Instance.ShowOnlyInfo("Starting match with player " + opponentsName);
                     Database.PutString(Database.Key.OPPONENT_NAME, opponentsName);
                 }
             } //opponent player name           
 
             string playerOneUserID = data["result"]["roomplayers"][0]["user_id"].Value.ToString();
-            if(Database.GetString(Database.Key.PLAYER_ID).Equals(playerOneUserID))            
-                MultiplayerManager.SetPlayerTag?.Invoke(Constants.PlayerTag.PLAYER_1);            
+            if (Database.GetString(Database.Key.PLAYER_ID).Equals(playerOneUserID))
+                MultiplayerManager.SetPlayerTag?.Invoke(Constants.PlayerTag.PLAYER_1);
             else
                 MultiplayerManager.SetPlayerTag?.Invoke(Constants.PlayerTag.PLAYER_2);
         }
@@ -285,11 +298,11 @@ public class SocketController : MonoBehaviour {
     }
 
     //Temporary
-   public void LoadedBoardScene()
+    public void LoadedBoardScene()
     {
-    //    Debug.Log("Loaded board Scene");
+        //    Debug.Log("Loaded board Scene");
         Dictionary<string, string> data = new Dictionary<string, string>();
-       
+
         data["room_id"] = Database.GetString(Database.Key.ROOM_ID);
         data["room_name"] = Database.GetString(Database.Key.ROOM_NAME);
         data["user_id"] = Database.GetString(Database.Key.PLAYER_ID);
@@ -299,7 +312,7 @@ public class SocketController : MonoBehaviour {
 
     void GameStart(string jsonData)
     {
-        Debug.Log("Game Start :"+ jsonData);
+        Debug.Log("Game Start :" + jsonData);
         LoadingCanvas.Instance.HideLoadingPopUp();
         BoardManager.InitializeGameRules?.Invoke();
     }
@@ -341,11 +354,11 @@ public class SocketController : MonoBehaviour {
         Debug.Log("Sending pawn placed data: " + newPawnPlacedData);
         Debug.Log(GameEmits.pawnplacements.ToString());
         socket.EmitJson(GameEmits.pawnplacements.ToString(), newPawnPlacedData);
-        GamePlay.instance.StopTurnTimer();       
+        GamePlay.instance.StopTurnTimer();
         GameManager.instance.currentGameState = GameManager.GAMESTATE.NONE;
         //Emit("pawnplacement",newpawnPlacedData);
         //PawnPlaced(newPawnPlacedData); //dont  call this from here        
-    }   
+    }
 
     //Call this with the opponent data.....sets pawns for opponent
     public void StartingPawnsPlaced(string data)
@@ -389,7 +402,7 @@ public class SocketController : MonoBehaviour {
         }
     }
 
-   
+
 
     public void SubmitTurn(Square from, Square to)
     {
@@ -399,13 +412,25 @@ public class SocketController : MonoBehaviour {
         //emit("submitTurnData", turnDataString);
     }
 
-    public void PrepareTurnData(GridData f, GridData t)
+    public void PrepareTurnData(GridData f, GridData t, string turnType = "normalType")
     {
         TurnData turnData = new TurnData(f, t);
-        TurnDataWrapper turnDataWrapper = new TurnDataWrapper( Database.GetString(Database.Key.ROOM_ID), Database.GetString(Database.Key.PLAYER_ID), turnData, Database.GetString(Database.Key.ROOM_NAME));
+        TurnDataWrapper turnDataWrapper = new TurnDataWrapper(Database.GetString(Database.Key.ROOM_ID), Database.GetString(Database.Key.PLAYER_ID), turnData, Database.GetString(Database.Key.ROOM_NAME), turnType);
         string data = JsonUtility.ToJson(turnDataWrapper);
-        Debug.Log("Turn Submitted: "+ data);
+        Debug.Log("Turn Submitted: " + data);
         socket.EmitJson(GameEmits.turnSubmited.ToString(), data);
+        if(turnType == "normalType")
+            GameManager.instance.currentGameState = GameManager.GAMESTATE.NONE;
+    }
+
+    public void PrepareSparepawnData(string targetSquareId)
+    {
+        GridData from = new GridData("", "", "");
+        GridData to = new GridData(targetSquareId, "", "");
+        TurnData turnData = new TurnData(from, to);
+        TurnDataWrapper turnDataWrapper = new TurnDataWrapper(Database.GetString(Database.Key.ROOM_ID), Database.GetString(Database.Key.PLAYER_ID), turnData, Database.GetString(Database.Key.ROOM_NAME), "sparePawn");
+        string data = JsonUtility.ToJson(turnDataWrapper);
+        socket.EmitJson(GameEmits.sparePawnTurn.ToString(), data);
         GameManager.instance.currentGameState = GameManager.GAMESTATE.NONE;
     }
 
@@ -416,11 +441,18 @@ public class SocketController : MonoBehaviour {
         var n = JSON.Parse(data);
         string fromSquareID = n["result"]["turnData"]["from"]["SquareID"].Value;
         string toSquareID = n["result"]["turnData"]["to"]["SquareID"].Value;
-        Debug.Log("From Square ID " + fromSquareID);
-        //foreach (KeyValuePair<string, Square> item in BoardManager.instance.squareCollection)
-        //{
-        //    Debug.Log("My Key" + item.Key);
-        //}
+        string turnType = n["result"]["turnType"].Value;
+        
+        if(turnType == TurnType.sparePawn.ToString())
+        {
+            Debug.LogError("Turn Type is Spare Pawn");
+            isSpareTowerTurn = true;
+        }
+        else
+        {
+            isSpareTowerTurn = false;
+        }
+
         Square newSquare = BoardManager.instance.GetSquare(fromSquareID);
         newSquare.MovePawn(BoardManager.instance.GetSquare(toSquareID));
     }

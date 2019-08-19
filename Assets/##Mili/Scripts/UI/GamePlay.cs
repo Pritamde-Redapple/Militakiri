@@ -1,12 +1,13 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using DG.Tweening;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class GamePlay : UIPage {
+public class GamePlay : UIPage
+{
     public static GamePlay instance;
     public Camera cam;
     public Camera effectCam;
@@ -18,7 +19,7 @@ public class GamePlay : UIPage {
 
     private Constants.PlayerType currentPlayerType;
 
-   // public RectTransform turnBowl;
+    // public RectTransform turnBowl;
     public Ease easeType;
 
     public List<Image> viewTypeButtons;
@@ -29,7 +30,7 @@ public class GamePlay : UIPage {
 
     public static Action OnTimerComplete;
     public static Action<Constants.ViewType> OnViewTypeChange;
-    public static Action<float> avatarTime;    
+    public static Action<float> avatarTime;
     public AvatarTimerUpdate localTimer;
     public AvatarTimerUpdate remoteTimer;
 
@@ -51,19 +52,19 @@ public class GamePlay : UIPage {
         PopUp.OnClosePopUp += OnClosePopUp;
         ViewTypeClicked((int)Constants.ViewType.THREE_D);
         StartCoroutine(SetViewType());
-        if(Constants.isAI)
-        {
-            backButton.SetActive(false);
-        }
-        else
+        if (Constants.isAI)
         {
             backButton.SetActive(true);
         }
-       // effectCam.gameObject.SetActive(false);
-       // cam.gameObject.SetActive(true);
-      // ViewTypeClicked((int)Constants.ViewType.THREE_D);
-       // BoardManager.InitializeGameRules?.Invoke();
-       // Invoke("InitializeGameRules", 1);
+        else
+        {
+            backButton.SetActive(false);
+        }
+        // effectCam.gameObject.SetActive(false);
+        // cam.gameObject.SetActive(true);
+        // ViewTypeClicked((int)Constants.ViewType.THREE_D);
+        // BoardManager.InitializeGameRules?.Invoke();
+        // Invoke("InitializeGameRules", 1);
     }
 
     //for testing fast
@@ -74,7 +75,7 @@ public class GamePlay : UIPage {
 
     private void Start()
     {
-        nameText_local.text = Database.GetString(Database.Key.FIRST_NAME); 
+        nameText_local.text = Database.GetString(Database.Key.FIRST_NAME);
         nameText_remote.text = Database.GetString(Database.Key.OPPONENT_NAME);
     }
 
@@ -108,7 +109,7 @@ public class GamePlay : UIPage {
         if (obj == PopUp.PopUpType.ERROR)
             SceneManager.LoadScene("UI");
         else if (obj == PopUp.PopUpType.OK)
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);   
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         else
         {
             GameManager.instance.OnGameEnd(Constants.PlayerType.LOCAL);
@@ -125,7 +126,7 @@ public class GamePlay : UIPage {
     private void OnTurnChanged(Constants.PlayerType obj, bool isEndRuleGameActivated)
     {
 
-        Debug.LogError("OnTurnChanged: "+ (int)obj + " player name" + obj.ToString());
+       // Debug.LogError("OnTurnChanged: " + (int)obj + " player name" + obj.ToString());
         currentPlayerType = obj;
         int playerIndex = (int)obj;
         glowForCurrentTurn.anchoredPosition = playerPicPosition[playerIndex].anchoredPosition;
@@ -141,14 +142,14 @@ public class GamePlay : UIPage {
         //    turnBowl.anchoredPosition = Vector2.zero;
         //    targetPos = new Vector2(0, -1245f);
         //}
-        if(playerIndex == 1)
+        if (playerIndex == 1)
         {
             avatarTime -= localTimer.UpdateFill;
             avatarTime += remoteTimer.UpdateFill;
             localTimer.ResetFill();
         }
         else
-        {          
+        {
 
             avatarTime -= remoteTimer.UpdateFill;
             avatarTime += localTimer.UpdateFill;
@@ -156,7 +157,7 @@ public class GamePlay : UIPage {
         }
 
         //turnBowl.DOAnchorPos(targetPos, 0.7f).SetEase(easeType);
-      //  Debug.Log("Turn Changed: "+ GameManager.instance.currentPlayerTurn.ToString());
+        //  Debug.Log("Turn Changed: "+ GameManager.instance.currentPlayerTurn.ToString());
         StopTurnTimer();
         StartTurnTimer(totalTime);
     }
@@ -168,7 +169,7 @@ public class GamePlay : UIPage {
 
     public void ChatClicked()
     {
-        
+
     }
 
     public void BackClicked()
@@ -178,38 +179,38 @@ public class GamePlay : UIPage {
 
     public void ViewTypeClicked(int type)
     {
-       CamController.SettingViewType?.Invoke();
-       for (int i = 0; i < viewTypeButtons.Count; i++)
+        CamController.SettingViewType?.Invoke();
+        for (int i = 0; i < viewTypeButtons.Count; i++)
         {
-            if(type == i)
-              viewTypeButtons[i].sprite = viewTypeSprite[1];
+            if (type == i)
+                viewTypeButtons[i].sprite = viewTypeSprite[1];
             else
-              viewTypeButtons[i].sprite = viewTypeSprite[0];
+                viewTypeButtons[i].sprite = viewTypeSprite[0];
         }
         Constants.currentViewType = (Constants.ViewType)Enum.ToObject(typeof(Constants.ViewType), type);
-        
-     //   Vector3 pos = cam.transform.position;
-     //   Vector3 angle = cam.transform.eulerAngles;
-      //  Debug.Log(angle + "angle");
+
+        //   Vector3 pos = cam.transform.position;
+        //   Vector3 angle = cam.transform.eulerAngles;
+        //  Debug.Log(angle + "angle");
         if (Constants.currentViewType == Constants.ViewType.TWO_D)
-        {         
+        {
             cam.orthographic = true;
             SetPositionAndCamRotation(camera2DDefault.position, camera2DDefault.eulerAngles);
         }
         else
-        {          
+        {
             cam.orthographic = false;
             SetPositionAndCamRotation(camera3DDefault.position, camera3DDefault.eulerAngles);
             if (OnViewTypeChange != null)
             {
                 OnViewTypeChange(Constants.currentViewType);
-            }           
+            }
         }
     }
 
     private void SetPositionAndCamRotation(Vector3 targetPosition, Vector3 targetAngle)
     {
-       // Debug.Log("Target Postion : "+ targetPosition);
+        // Debug.Log("Target Postion : "+ targetPosition);
         cam.transform.DOLocalMove(targetPosition, speedforCameraSwitch).SetEase(easeTypeForCamera).OnComplete(() =>
         {
             if (Constants.currentViewType == Constants.ViewType.TWO_D)
@@ -222,7 +223,8 @@ public class GamePlay : UIPage {
                 //   cam.transform.GetChild(0).gameObject.SetActive(true);
             }
         });
-        cam.transform.DOLocalRotate(targetAngle, speedforCameraSwitch + 0.2f ).SetEase(easeTypeForCamera).OnComplete(()=> {
+        cam.transform.DOLocalRotate(targetAngle, speedforCameraSwitch + 0.2f).SetEase(easeTypeForCamera).OnComplete(() =>
+        {
             if (Constants.currentViewType == Constants.ViewType.THREE_D)
             {
                 CamController.OnFinishedSettingViewType?.Invoke();
@@ -230,7 +232,7 @@ public class GamePlay : UIPage {
         });
     }
 
-    
+
     #region Timer
 
     public float totalTime = 300f;
@@ -253,17 +255,18 @@ public class GamePlay : UIPage {
             {
                 canStart = false;
                 // TIMER HAS EXPIRED
-              //  GameManager.instance.currentGameState = GameManager.GAMESTATE.END;
-               OnTimerComplete?.Invoke();
-                
-               // GameManager.instance.OnGameEnd(currentPlayerType);
+                //  GameManager.instance.currentGameState = GameManager.GAMESTATE.END;
+                OnTimerComplete?.Invoke();
+
+                // GameManager.instance.OnGameEnd(currentPlayerType);
             }
         }
-        
+
     }// END OF UPDATE FUNCTION
 
     public void StartTurnTimer(float totalTime)
-    { if(totalTime == 0)
+    {
+        if (totalTime == 0)
         {
 
         }
@@ -289,9 +292,9 @@ public class GamePlay : UIPage {
         canStart = true;
         OnTimerComplete += callback;
         totalSeconds = totalTime;
-      //  Debug.Log("Total Time: " + totalTime);
+        //  Debug.Log("Total Time: " + totalTime);
     }
-    
+
 
     public void StopTurnTimer()
     {
@@ -313,34 +316,34 @@ public class GamePlay : UIPage {
 
     public void ShowWarning(bool state = true)
     {
-        if(state == false)
+        if (state == false)
         {
-            CancelInvoke("DisplayWarning");            
+            CancelInvoke("DisplayWarning");
         }
         else
         {
             SetDesriptionForPlacingPawn("");
         }
-        
+
         warningMessageBox.SetActive(state);
     }
 
     private void OnApplicationPause(bool pause)
     {
-       /* if (!UIManager.instance.isBotPlaying)
-        {
-            if (!pause && canStart)
-            {
-                // resume the game 
-                extraTime = (System.DateTime.Now - pausedTime).TotalSeconds;
-                timeLeft -= (float)extraTime;
-            }
-            else if (canStart)
-            {
-                // Pause the game 
-                pausedTime = System.DateTime.Now;
-            }
-        }*/
+        /* if (!UIManager.instance.isBotPlaying)
+         {
+             if (!pause && canStart)
+             {
+                 // resume the game 
+                 extraTime = (System.DateTime.Now - pausedTime).TotalSeconds;
+                 timeLeft -= (float)extraTime;
+             }
+             else if (canStart)
+             {
+                 // Pause the game 
+                 pausedTime = System.DateTime.Now;
+             }
+         }*/
     }
     #endregion
 

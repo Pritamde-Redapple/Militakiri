@@ -3,7 +3,8 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour
+{
 
     public Constants.PlayerType currentPlayerType;
 
@@ -65,12 +66,12 @@ public class Player : MonoBehaviour {
         {
             Invoke("AICalculation", Random.Range(3, 5f));
         }
-        if(isEndRuleGameActivated && pType == currentPlayerType)
+        if (isEndRuleGameActivated && pType == currentPlayerType)
         {
             totalTurnLeft--;
             if (totalTurnLeftText != null)
                 totalTurnLeftText.text = totalTurnLeft.ToString() + " MOVES LEFT";
-            if(totalTurnLeft == 0)
+            if (totalTurnLeft == 0)
             {
                 Debug.Log("Game should end");
                 GameManager.instance.OnGameEnd(Constants.PlayerType.NONE);
@@ -81,18 +82,23 @@ public class Player : MonoBehaviour {
     private void OnDisable()
     {
         Pawn.OnTakeComplete -= CheckAvailabilityOfSpareTower;
-        BoardManager.OnActiveEndRule -= ActiveEndGameRule;        
-        GameManager.OnTurnChanged -= OnTurnChanged;        
+        BoardManager.OnActiveEndRule -= ActiveEndGameRule;
+        GameManager.OnTurnChanged -= OnTurnChanged;
         BoardManager.OnDeactiveEndRule -= DeactiveEndGameRule;
     }
 
     private void CheckAvailabilityOfSpareTower(Constants.PlayerType obj, Pawn pawn)
     {
+        Debug.Log(obj.ToString() + " checking for spare tower");
         if (obj != currentPlayerType)
+        {
+            BoardManager.instance.gamePlay.SetDesriptionForPlacingPawn("Waiting for "+ Database.GetString(Database.Key.OPPONENT_NAME) + "to place spare tower");
+            //BoardManager.instance.RemovePawnFromBoard(pawn);
             return;
+        }
         for (int i = 0; i < availableSpareTower.Count; i++)
         {
-            if(availableSpareTower[i].currentPawnType == pawn.currentPawnType)
+            if (availableSpareTower[i].currentPawnType == pawn.currentPawnType)
             {
                 Debug.Log("Can replace with spare tower");
                 currentSparePawn = availableSpareTower[i];
@@ -112,15 +118,14 @@ public class Player : MonoBehaviour {
     {
         // First Check Available Space in first 3 row
         List<Square> availableSquare = CheckAvailableSpaceInMyPlace();
-        if(availableSquare.Count > 0)
+        if (availableSquare.Count > 0)
         {
             //PLACE SPARE TOWER IN HIGHLIGHTED PLACE
             BoardManager.instance.gamePlay.SetDesriptionForPlacingPawn("Select highlighted square to place SPARE tower");
 
-            if(Constants.isAI && currentPlayerType == Constants.PlayerType.REMOTE)
+            if (Constants.isAI && currentPlayerType == Constants.PlayerType.REMOTE)
             {
                 Debug.Log("AI places spare tower automatically ");
-
                 int squareIndex = Random.Range(0, availableSquare.Count);
                 BoardManager.instance.PlaceSparePawn(this, availableSquare[squareIndex]);
             }
@@ -207,7 +212,7 @@ public class Player : MonoBehaviour {
         List<SquareWithDistance> possibleTakingTowerPawn = new List<SquareWithDistance>();
         for (int i = 0; i < allpossibleTakes.Count; i++)
         {
-            if(allpossibleTakes[i].square.occupiedPawn.Rank > 5)
+            if (allpossibleTakes[i].square.occupiedPawn.Rank > 5)
             {
                 possibleTakingTowerPawn.Add(allpossibleTakes[i]);
             }
@@ -227,11 +232,11 @@ public class Player : MonoBehaviour {
         //Check whether opponent player will able to take my tower pawn
         List<SquareWithDistance> possibleTakingTowerPawnByOpponent = opponentPlayer.PossibleTakingTowerPawn();
 
-       // Debug.Log(" possibleTakingTowerPawnByOpponent.Count : " + possibleTakingTowerPawnByOpponent.Count);
-        if(possibleTakingTowerPawnByOpponent.Count > 0)
+        // Debug.Log(" possibleTakingTowerPawnByOpponent.Count : " + possibleTakingTowerPawnByOpponent.Count);
+        if (possibleTakingTowerPawnByOpponent.Count > 0)
         {
             int percentage = Random.Range(0, 100);
-            if(percentage <= Constants.GetPercentageForDetectingOpponent())
+            if (percentage <= Constants.GetPercentageForDetectingOpponent())
             {
                 int index = Random.Range(0, possibleTakingTowerPawnByOpponent.Count);
                 Square squareToMove = possibleTakingTowerPawnByOpponent[index].square;
@@ -268,11 +273,11 @@ public class Player : MonoBehaviour {
                     }
                 }
             }
-           
+
         }
 
         int maxDistance = Constants.GetMaximumDistanceCanTowerPawnMove();
-        if ((opponentPlayer.noOfTowerPawn == 1 || noOfTowerPawn == 1)&& Constants.currentLevelType == Constants.LevelType.HARD)
+        if ((opponentPlayer.noOfTowerPawn == 1 || noOfTowerPawn == 1) && Constants.currentLevelType == Constants.LevelType.HARD)
             maxDistance = 15;
         allPossobleMoves.RemoveAll(pawn => pawn.distance > maxDistance);
         allpossibleTakes.RemoveAll(pawn => pawn.distance > maxDistance);
@@ -289,7 +294,7 @@ public class Player : MonoBehaviour {
             }
         }
 
-        if(allTakeableTowerPawn.Count > 0)
+        if (allTakeableTowerPawn.Count > 0)
         {
             int percentage = Random.Range(0, 100);
             // Debug.Log(percentage);
@@ -311,7 +316,7 @@ public class Player : MonoBehaviour {
         {
             PossibilityToMakeTowerPawn();
         }
-        
+
     }
 
     void PossibilityToMakeTowerPawn()
@@ -340,7 +345,7 @@ public class Player : MonoBehaviour {
     public void AI(int difference = 0)
     {
         int percentage = Random.Range(0, 100);
-      //  Debug.Log(percentage);
+        //  Debug.Log(percentage);
         if (percentage < (percentageForAICalculation + difference))
         {
             // SIMPLE MOVE
@@ -361,7 +366,7 @@ public class Player : MonoBehaviour {
         int pawnIndex = Random.Range(0, allPossobleMoves.Count);
         allPossobleMoves[pawnIndex].fromSquare.MovePawn(allPossobleMoves[pawnIndex].square);
 
-      //  Debug.Log("allPossobleMoves.Count : " + allPossobleMoves.Count + " pawnIndex :  " + pawnIndex);
+        //  Debug.Log("allPossobleMoves.Count : " + allPossobleMoves.Count + " pawnIndex :  " + pawnIndex);
     }
 
     void AITake()

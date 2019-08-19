@@ -1,10 +1,10 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using DG.Tweening;
 
-public class BoardManager : MonoBehaviour {
+public class BoardManager : MonoBehaviour
+{
 
     public static BoardManager instance;
 
@@ -41,12 +41,12 @@ public class BoardManager : MonoBehaviour {
         set
         {
             undoCounter = value;
-            if (value <= 0) 
+            if (value <= 0)
                 undoButton.SetActive(false);
             else
-               undoButton.SetActive(true);
+                undoButton.SetActive(true);
 
-            if(value == pawnMovementDatas.Count)
+            if (value == pawnMovementDatas.Count)
                 redoButton.SetActive(false);
         }
     }
@@ -61,7 +61,7 @@ public class BoardManager : MonoBehaviour {
         set
         {
             counterForPlacingPawn = value;
-          
+
             HighlightSquareForPlacingPawn();
 
             if (value == 3 && OnPawnPlacementComplete != null)
@@ -79,7 +79,7 @@ public class BoardManager : MonoBehaviour {
     }
 
     private int counterForPlacingPawn = 0;
-    
+
     public Player[] players;
     public Player playerToPlaceSpareTower;
     public Constants.PlayerType playerWithOneTower;
@@ -88,7 +88,7 @@ public class BoardManager : MonoBehaviour {
     public Material local_spareTowerMaterial;
     public Material remote_spareTowerMaterial;
     public Material local_pawnMaterial;
-    public Material remote_pawnMaterial; 
+    public Material remote_pawnMaterial;
     #endregion
 
     #region ALL EVENTS
@@ -97,25 +97,27 @@ public class BoardManager : MonoBehaviour {
     public static UnityAction<Constants.PlayerType> OnActiveEndRule;
     public static UnityAction OnDeactiveEndRule;
     #endregion
-   
+
 
     public Dictionary<string, Square> squareCollection = new Dictionary<string, Square>();
-   
+    public Dictionary<Constants.PlayerType, Player> dic_players = new Dictionary<Constants.PlayerType, Player>();
+
 
     private void Awake()
     {
         instance = this;
-        
+
     }
     // Use this for initialization
-    void Start ()
+    void Start()
     {
-        if(MultiplayerManager.GetPlayerTag() == Constants.PlayerTag.PLAYER_2)
+        if (MultiplayerManager.GetPlayerTag() == Constants.PlayerTag.PLAYER_2)
         {
             transform.parent.rotation = Quaternion.Euler(0, 180, 0);
+           
         }
         ResetAllSquare(); //Turns off highlights
-        if(!Constants.isAI)
+        if (!Constants.isAI)
             InitializeGameRules += InitializeMultiplayerGame;
         else
             InitializeGameRules += InitializeGame;
@@ -126,18 +128,85 @@ public class BoardManager : MonoBehaviour {
         local_spareTowerMaterial.color = local_pawnMaterial.color;
         remote_spareTowerMaterial.color = remote_pawnMaterial.color;
         SetupSecondaryIds();
-    }   
+        for (int i = 0; i < players.Length; i++)
+        {
+            dic_players.Add(players[i].currentPlayerType, players[i]);
+        }
+        if (MultiplayerManager.GetPlayerTag() == Constants.PlayerTag.PLAYER_2)
+        {
+            Debug.Log("Switching spare pawns");
+            SwitchSparePawns();
+        }
+    }
 
     private void InitializeGame()
-    {        
+    {
         pawnMovementDatas = new List<PawnMovementData>();
         HighlightSquareForPlacingPawn();
         GameManager.OnTurnChanged += OnTurnChanged;
     }
 
+    private void SwitchSparePawns()
+    {
+        List<Pawn> localSpareTowers = new List<Pawn>();
+        List<Pawn> remoteSpareTowers = new List<Pawn>();
+
+        foreach (var item in dic_players[Constants.PlayerType.LOCAL].availableSpareTower)
+        {
+            localSpareTowers.Add(item);
+        }
+
+        foreach (var item in dic_players[Constants.PlayerType.REMOTE].availableSpareTower)
+        {
+            remoteSpareTowers.Add(item);
+        }
+
+
+        foreach (var item in localSpareTowers)
+        {
+            Debug.Log(item.currentPawnType.ToString());
+        }
+
+
+        dic_players[Constants.PlayerType.LOCAL].availableSpareTower.Clear();
+        dic_players[Constants.PlayerType.REMOTE].availableSpareTower.Clear();
+
+        foreach (var item in localSpareTowers)
+        {
+            dic_players[Constants.PlayerType.REMOTE].availableSpareTower.Add(item);
+            item.GetComponentInChildren<MeshRenderer>().material = remote_pawnMaterial;
+        }
+
+        foreach (var item in remoteSpareTowers)
+        {
+            dic_players[Constants.PlayerType.LOCAL].availableSpareTower.Add(item);
+            item.GetComponentInChildren<MeshRenderer>().material = local_pawnMaterial;
+        }
+        
+
+
+
+        //Color newLocalColor  = dic_players[Constants.PlayerType.REMOTE].pawnMaterial.color;
+        //Color newRemoteColor = dic_players[Constants.PlayerType.LOCAL].pawnMaterial.color;
+
+        //Texture newLocalTexture = local_pawnMaterial.mainTexture;
+        //Texture newRemoteTexture = remote_pawnMaterial.mainTexture;
+
+        //dic_players[Constants.PlayerType.LOCAL].pawnMaterial.mainTexture = local_pawnMaterial.mainTexture;
+        //dic_players[Constants.PlayerType.LOCAL].pawnMaterial.color = local_pawnMaterial.color;
+
+
+        //dic_players[Constants.PlayerType.REMOTE].pawnMaterial.mainTexture = remote_pawnMaterial.mainTexture;
+        //dic_players[Constants.PlayerType.REMOTE].pawnMaterial.color       = remote_pawnMaterial.color;
+
+       
+
+
+    }
+
     private void OnViewTypeChanged(Constants.ViewType viewType)
     {
-        if(viewType == Constants.ViewType.THREE_D)
+        if (viewType == Constants.ViewType.THREE_D)
         {
             //for 3d
             foreach (var thisPlayer in players)
@@ -169,22 +238,22 @@ public class BoardManager : MonoBehaviour {
         int id = 0;
         foreach (Square item in squarePoints)
         {
-            item.gameObject.name = "Square_"+id;
+            item.gameObject.name = "Square_" + id;
             item.SquareId = id;
             id++;
         }
     }
     #endregion
-    public void  IsSquareSelected(Square targetSquare)
+    public void IsSquareSelected(Square targetSquare)
     {
         if (!canClick)
             return;
-        if (selectedSquare == null 
-            && Constants.isAI 
-            && targetSquare.occupiedPawn != null 
+        if (selectedSquare == null
+            && Constants.isAI
+            && targetSquare.occupiedPawn != null
             && targetSquare.occupiedPawn.currentPlayerType == Constants.PlayerType.REMOTE)
             return;
-        
+
         if (selectedSquare != null && targetSquare.isHighlighted)
         {
             // Move selected square to this square
@@ -196,7 +265,7 @@ public class BoardManager : MonoBehaviour {
             return;
         }
         //if selected square has a pawn
-        else if(targetSquare.occupiedPawn != null)
+        else if (targetSquare.occupiedPawn != null)
         {
             if (targetSquare.occupiedPawn.currentPlayerType != GameManager.instance.currentPlayerTurn)//if the board piece is of the opponent's
                 return;
@@ -210,8 +279,10 @@ public class BoardManager : MonoBehaviour {
         else if (targetSquare.occupiedPawn == null && targetSquare.isHighlighted)
         {
             // PLACE SPARE TOWER IN HIGHLIGHTED PLACE
-            Player player = players[(int)GameManager.instance.currentPlayerTurn];
+            Player player = dic_players[Constants.PlayerType.LOCAL];
             PlaceSparePawn(player, targetSquare);
+            Debug.Log("Sending target square: "+ targetSquare.squareId2);
+           SocketController.instance.PrepareSparepawnData(targetSquare.squareId2);
         }
     }
     //Turns off highlights
@@ -222,7 +293,7 @@ public class BoardManager : MonoBehaviour {
             squarePoints[i].SetHighlightStatus(false);
         }
     }
-      
+
     public void RemovePawnFromBoard(Pawn pawn)
     {
         Transform parent3D = players[(int)pawn.currentPlayerType].removedPawnParent3D;
@@ -234,24 +305,24 @@ public class BoardManager : MonoBehaviour {
         GameObject duplicatePawn = Instantiate(pawn.gameObject, pawn.transform.position, pawn.transform.rotation);
 
         SetRemovedPawns2D(duplicatePawn.transform, parent2D);
-       
-      //  Vector3 pos = new Vector3(0, 0, 0.3f * (parent.childCount - 1));
-      //  pawn.transform.localPosition = pos;
+
+        //  Vector3 pos = new Vector3(0, 0, 0.3f * (parent.childCount - 1));
+        //  pawn.transform.localPosition = pos;
 
         int noOfTowerPawn = players[(int)pawn.currentPlayerType].GetNoOfTowerPawnAvailable();
-      //  Debug.Log(" noOfTowerPawn " + noOfTowerPawn);
-        if(noOfTowerPawn == 1 && OnActiveEndRule != null)
+        //  Debug.Log(" noOfTowerPawn " + noOfTowerPawn);
+        if (noOfTowerPawn == 1 && OnActiveEndRule != null)
         {
             Debug.Log("Active End Game Rules");
             OnActiveEndRule(pawn.currentPlayerType);
             playerWithOneTower = pawn.currentPlayerType;
         }
-        if(noOfTowerPawn == 0)
+        if (noOfTowerPawn == 0)
         {
             Debug.Log("Game should end");
             GameManager.instance.OnGameEnd(pawn.currentPlayerType);
         }
-        
+
     }
 
     private void SetRemovedPawns3D(Transform targetPawn, Transform dumpPoint)
@@ -263,7 +334,7 @@ public class BoardManager : MonoBehaviour {
         float delayToDestroyRigidbody = 4.2f;
         Vector3 newRelativeTorque = new Vector3(Random.Range(minTorqueRange, maxTorqueRange), Random.Range(minTorqueRange, maxTorqueRange), Random.Range(minTorqueRange, maxTorqueRange));
         Vector3 offsetPosition = new Vector3(dumpPoint.position.x, dumpPoint.position.y, dumpPoint.position.z + Random.Range(-0.36f, 0.36f));
-        targetPawn.DOMove(offsetPosition, Constants.PAWN_DUMP_SPEED).OnComplete(()=> 
+        targetPawn.DOMove(offsetPosition, Constants.PAWN_DUMP_SPEED).OnComplete(() =>
         {
             MeshRenderer[] meshRenderer = targetPawn.GetComponentsInChildren<MeshRenderer>();
 
@@ -285,7 +356,7 @@ public class BoardManager : MonoBehaviour {
 
 
 
-           
+
         });
     }
 
@@ -309,7 +380,7 @@ public class BoardManager : MonoBehaviour {
 
         if (canReset && OnDeactiveEndRule != null)
             OnDeactiveEndRule();
-       
+
     }
     #region UI Buttons
     public void UndoClicked()
@@ -319,14 +390,14 @@ public class BoardManager : MonoBehaviour {
         redoButton.SetActive(true);
         selectedSquare = squarePoints[pawnMovementDatas[UndoCounter].toSquareId];
         Square targetSquare = squarePoints[pawnMovementDatas[UndoCounter].fromSquareId];
-       // MovePawn(targetSquare, false);
+        // MovePawn(targetSquare, false);
 
     }
     public void RedoClicked()
     {
         Square targetSquare = squarePoints[pawnMovementDatas[UndoCounter].toSquareId];
         selectedSquare = squarePoints[pawnMovementDatas[UndoCounter].fromSquareId];
-       // MovePawn(targetSquare, false);
+        // MovePawn(targetSquare, false);
         UndoCounter++;
 
     }
@@ -336,7 +407,7 @@ public class BoardManager : MonoBehaviour {
     //used for highlighting rows at the start of the game
     public void HighlightSquareForPlacingPawn()
     {
-        if(Constants.isAI)
+        if (Constants.isAI)
         {
             #region AI
             if (CounterForPlacingPawn == 0)
@@ -423,12 +494,12 @@ public class BoardManager : MonoBehaviour {
     {
         for (int i = 0; i < (3 * Constants.noOfSquarePerRow); i += Constants.noOfSquarePerRow)
         {
-            int rand = Random.Range(i, i+Constants.noOfSquarePerRow);
+            int rand = Random.Range(i, i + Constants.noOfSquarePerRow);
             Square randomSquareInRow = players[0].firstThreeRowSquare[rand];
-            PlacePawn(randomSquareInRow);           
+            PlacePawn(randomSquareInRow);
         }
 
-       
+
     }
     PawnPlaced newPawnPlaced = new PawnPlaced();
     public void PlacePawn(Square square)
@@ -472,7 +543,7 @@ public class BoardManager : MonoBehaviour {
         int towerIndex = 0;
         int pawnIndex = 0;
 
-        if(Constants.isAI)
+        if (Constants.isAI)
         {
             #region Multiplayer
             switch (CounterForPlacingPawn)
@@ -482,7 +553,7 @@ public class BoardManager : MonoBehaviour {
                     towerIndex = 4;
                     pawnIndex = 0;
                     SetHightlights(square, towerIndex, pawnIndex);
-                    
+
                     break;
                 case 1:
                     towerIndex = 3;
@@ -493,7 +564,7 @@ public class BoardManager : MonoBehaviour {
                     int index = square.SquareId;
                     CreatePawn(index, players[0].allPawns, localPawns[5]);
 
-                    for (int i = 12; i < 12+ Constants.noOfSquarePerRow; i++)
+                    for (int i = 12; i < 12 + Constants.noOfSquarePerRow; i++)
                     {
                         if (players[0].firstThreeRowSquare[i].SquareId != index)
                         {
@@ -571,10 +642,10 @@ public class BoardManager : MonoBehaviour {
                 GridData gridData = new GridData(initSquares[i].squareId2, initSquares[i].occupiedPawn.currentPawnType.ToString(), initSquares[i].occupiedPawn.Rank.ToString());
                 newGridData.Add(gridData);
             }
-            PawnPlacements pawnPlacements = new PawnPlacements(Database.GetString(Database.Key.ROOM_NAME), Database.GetString(Database.Key.ROOM_ID), Database.GetString(Database.Key.PLAYER_ID),newGridData);
+            PawnPlacements pawnPlacements = new PawnPlacements(Database.GetString(Database.Key.ROOM_NAME), Database.GetString(Database.Key.ROOM_ID), Database.GetString(Database.Key.PLAYER_ID), newGridData);
             //Send Data to server
             SocketController.instance.SendPawnPlacements(pawnPlacements);
-        } 
+        }
         #endregion
     }
 
@@ -605,7 +676,7 @@ public class BoardManager : MonoBehaviour {
                 pawnIndex = 1;
             else
                 pawnIndex = 0;
-        }       
+        }
     }
 
     void PlacePawnForAI()
@@ -614,10 +685,10 @@ public class BoardManager : MonoBehaviour {
         int index = Random.Range(0, Constants.noOfSquarePerRow);
         for (int i = 0; i < Constants.noOfSquarePerRow; i++)
         {
-            if(i == index)
-               CreatePawn(players[1].firstThreeRowSquare[i].SquareId, players[1].allPawns, remotePawns[5]);
+            if (i == index)
+                CreatePawn(players[1].firstThreeRowSquare[i].SquareId, players[1].allPawns, remotePawns[5]);
             else
-               CreatePawn(players[1].firstThreeRowSquare[i].SquareId, players[1].allPawns, remotePawns[2]);
+                CreatePawn(players[1].firstThreeRowSquare[i].SquareId, players[1].allPawns, remotePawns[2]);
         }
 
         // PLACE PLUS AND CROSS TOWER & NORMAL PAWN
@@ -638,7 +709,7 @@ public class BoardManager : MonoBehaviour {
             index = Random.Range(j * Constants.noOfSquarePerRow, (j + 1) * Constants.noOfSquarePerRow);
             CreatePawn(players[1].firstThreeRowSquare[index].SquareId, players[1].allPawns, remotePawns[towerIndex]);
 
-            int startIndex = j* Constants.noOfSquarePerRow;
+            int startIndex = j * Constants.noOfSquarePerRow;
             int endIndex = (j + 1) * Constants.noOfSquarePerRow;
 
             for (int i = index + 1; i < endIndex; i++)
@@ -659,7 +730,7 @@ public class BoardManager : MonoBehaviour {
             }
         }
     }
-    
+
     void CreatePawn(int i, Transform parent, GameObject pawnPrefabs)
     {
         Transform obj = Instantiate(pawnPrefabs).transform;
@@ -671,12 +742,13 @@ public class BoardManager : MonoBehaviour {
         obj.SetParent(parent);
         //squarePoints[i].SetHighlightStatus(false);
     }
-    void PlaceSparePawn(int i, Transform parent, Pawn pawn)
+    void PlaceSparePawn(Square thisSquare, Transform parent, Pawn pawn)
     {
-       // pawn.transform.position = squarePoints[i].transform.position;
-        FlyPawnOut(pawn.transform, squarePoints[i].transform.position);
-        squarePoints[i].occupiedPawn = pawn;
-        pawn.occupiedSquare = squarePoints[i];
+        // pawn.transform.position = squarePoints[i].transform.position;
+        Debug.Log("Placing Pawn at : "+ thisSquare.squareId2);
+        FlyPawnOut(pawn.transform, thisSquare.transform.position);
+        thisSquare.occupiedPawn = pawn;
+        pawn.occupiedSquare = thisSquare;
         pawn.transform.SetParent(parent);
         pawn.gameObject.SetActive(true);
         gamePlay.SetDesriptionForPlacingPawn("");
@@ -688,22 +760,35 @@ public class BoardManager : MonoBehaviour {
     {
         Pawn pawn = player.currentSparePawn;
         player.currentSparePawn = null;
-        PlaceSparePawn(targetSquare.squareId, player.allPawns, pawn);
+        PlaceSparePawn(targetSquare, player.allPawns, pawn);
         playerToPlaceSpareTower = null;
         ResetAllSquare();
         GameManager.instance.IncreaseTurn();
         CheckForResetEndGameRule();
+    }
 
+    public void PlaceSparePawnForRemote(string targetSquareID)
+    {
+        Pawn pawn = dic_players[Constants.PlayerType.REMOTE].currentSparePawn;
+        dic_players[Constants.PlayerType.REMOTE].currentSparePawn = null;
+        Square square = GetSquare(targetSquareID);
+        PlaceSparePawn(square, dic_players[Constants.PlayerType.REMOTE].allPawns, pawn);
+        playerToPlaceSpareTower = null;
+        ResetAllSquare();
+        GameManager.instance.IncreaseTurn();
+        CheckForResetEndGameRule();
     }
     //the spare tower comes out of board and lands on the target tile
     private void FlyPawnOut(Transform targetPawn, Vector3 targetPosition)
     {
         float multiplier = 1;
-        if (targetPawn.position.z < 0)
-            multiplier = -1;        
-        else
-            multiplier = 1;
-        
+        if (MultiplayerManager.GetPlayerTag() == Constants.PlayerTag.PLAYER_1)
+        {
+            if (targetPawn.position.z < 0)
+                multiplier = -1;
+            else
+                multiplier = 1;
+        }
 
         float zOffset = 2 * multiplier;
         float zDuration = 0.8f;
@@ -712,12 +797,12 @@ public class BoardManager : MonoBehaviour {
         float finalDuration = 0.5f;
         Vector3 rotationValue = new Vector3(-90, 0, 0);
 
-        
+
         Sequence mySequence = DOTween.Sequence();
         mySequence.Append(targetPawn.DOLocalMoveZ(zOffset, zDuration)); // move out of the side of the board
         mySequence.Append(targetPawn.DOLocalRotate(rotationValue, rotationDuration));
         mySequence.Append(targetPawn.DOLocalMoveY(yOffset, zDuration)); //fly upwards
-        mySequence.Append(targetPawn.DOLocalMove(targetPosition, finalDuration)).SetEase(Ease.OutCubic); //finally go to the target position
+        mySequence.Append(targetPawn.DOMove(targetPosition, finalDuration)).SetEase(Ease.OutCubic); //finally go to the target position
     }
     #endregion
 
@@ -730,18 +815,18 @@ public class BoardManager : MonoBehaviour {
     public void SetSquarePointOfMultiplayer()
     {
         players[0].firstThreeRowSquare.Clear();
-        if (MultiplayerManager.GetPlayerTag()== Constants.PlayerTag.PLAYER_1)
+        if (MultiplayerManager.GetPlayerTag() == Constants.PlayerTag.PLAYER_1)
         {
             Debug.Log("Adding front squares");
             for (int i = 0; i < 3 * Constants.noOfSquarePerRow; i++)
             {
-                players[0].firstThreeRowSquare.Add(squarePoints[squarePoints.Length - i - 1]);               
+                players[0].firstThreeRowSquare.Add(squarePoints[squarePoints.Length - i - 1]);
             }
         }
         else
         {
 
-           // Debug.Log("Adding back squares");
+            // Debug.Log("Adding back squares");
             for (int i = 0; i < 3 * Constants.noOfSquarePerRow; i++)
             {
                 players[0].firstThreeRowSquare.Add(squarePoints[i]);
@@ -759,7 +844,7 @@ public class BoardManager : MonoBehaviour {
         }
         for (int i = 0; i < 3 * Constants.noOfSquarePerRow; i++)
         {
-            players[1].firstThreeRowSquare.Add(squarePoints[squarePoints.Length -i - 1]);
+            players[1].firstThreeRowSquare.Add(squarePoints[squarePoints.Length - i - 1]);
         }
 
         transform.parent.eulerAngles = new Vector3(-90f, 180, -90f);
@@ -769,8 +854,8 @@ public class BoardManager : MonoBehaviour {
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-            SetSquarePointOfPlayer();
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //    SetSquarePointOfPlayer();
     }
 
     private void OnDestroy()
@@ -783,18 +868,18 @@ public class BoardManager : MonoBehaviour {
     //squareId2 is of the A3, B5 etc format
     void SetupSecondaryIds()
     {
-        char[] rows = "ABCDEF".ToCharArray();
-        int[] intArray = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+        //char[] rows = "ABCDEF".ToCharArray();
+        //int[] intArray = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
 
-        int squareNumber = 0;
-        for (int i = 12; i > 0; i--)
-        {
-            for (int j = 0; j < rows.Length; j++)
-            {
-                squarePoints[squareNumber].squareId2 = "" + rows[j] + i;
-                squareNumber++;
-            }
-        }
+        //int squareNumber = 0;
+        //for (int i = 12; i > 0; i--)
+        //{
+        //    for (int j = 0; j < rows.Length; j++)
+        //    {
+        //        squarePoints[squareNumber].squareId2 = "" + rows[j] + i;
+        //        squareNumber++;
+        //    }
+        //}
         AddToDict();
     }
     void AddToDict()
@@ -802,13 +887,13 @@ public class BoardManager : MonoBehaviour {
         for (int i = 0; i < squarePoints.Length; i++)
         {
             squareCollection.Add(squarePoints[i].squareId2, squarePoints[i]);
-        }       
+        }
     }
 
     public Square GetSquare(string key)
     {
         return squareCollection[key];
-    }   
+    }
 
     void InitializeMultiplayerGame()
     {
@@ -880,13 +965,13 @@ public class BoardManager : MonoBehaviour {
 
         //FirstpawnData contains data of this player and opponent :(
         int index = 0;
-            Debug.Log("User Id :"+ pawnPlaced.pawnlist[0].user_id + "___" + Database.GetString(Database.Key.PLAYER_ID));
-            string uid = Database.GetString(Database.Key.PLAYER_ID);
+        Debug.Log("User Id :" + pawnPlaced.pawnlist[0].user_id + "___" + Database.GetString(Database.Key.PLAYER_ID));
+        string uid = Database.GetString(Database.Key.PLAYER_ID);
         if (pawnPlaced.pawnlist[0].user_id.Equals(uid))
             index = 1;
         else
             index = 0;
-            Debug.Log("Got User Id :"+ index + "<---index " + pawnPlaced.pawnlist[index].user_id + "___" + uid);
+        Debug.Log("Got User Id :" + index + "<---index " + pawnPlaced.pawnlist[index].user_id + "___" + uid);
         List<GridData> opponentPlacementData = pawnPlaced.pawnlist[index].GridDatas;
         CreatePawnsOpponent(opponentPlacementData);
 
@@ -901,22 +986,22 @@ public class BoardManager : MonoBehaviour {
                     return remotePawns[3];
                 else
                     return remotePawns[0];
-               
+
             case Pawn.PawnType.PLUS:
                 if (rank > 1)
                     return remotePawns[4];
                 else
                     return remotePawns[1];
-               
+
             case Pawn.PawnType.STAR:
                 if (rank > 1)
                     return remotePawns[5];
                 else
                     return remotePawns[2];
-               
+
             default:
                 return remotePawns[0];
-               
+
         }
     }
 
